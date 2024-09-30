@@ -74,7 +74,7 @@ class StonesDetection:
                 # координаты прямоугольной области
                 y1 = y - self._ry if (y - self._ry) > self._start[0] else y
                 y2 = y + self._ry if (y + self._ry) < self._end[0] else y
-                x1  = x - self._rx if (x - self._rx) > self._start[1] else x
+                x1 = x - self._rx if (x - self._rx) > self._start[1] else x
                 x2 = x + self._rx if (x + self._rx) < self._end[1] else x
                 
                 colors = binary_image[y1:y2,x1:x2]
