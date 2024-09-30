@@ -7,11 +7,12 @@ image = cv2.imread("test\\img\\Image10.jpg")
 h, w = image.shape[:2]
 
 stones_detection = StonesDetection(0, 0, w, h, size)
-stones_detection.debugging = True
+stones_detection.is_show_processed_img = True
 
 matrix1 = stones_detection.get_stones_matrix(image)
     
-matrix2 = [[0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 0, 1, 2, 2, 0, 2, 2, 2],
+matrix2 = np.array(
+          [[0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 0, 1, 2, 2, 0, 2, 2, 2],
            [2, 2, 0, 0, 0, 2, 0, 2, 2, 2, 1, 1, 0, 1, 2, 2, 0, 2, 2],
            [1, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 1, 0, 1, 1, 2, 2, 1, 2],
            [1, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1, 1, 2, 2, 1, 1, 1, 1],
@@ -30,9 +31,9 @@ matrix2 = [[0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 0, 1, 2, 2, 0, 2, 2, 2],
            [1, 1, 2, 2, 1, 1, 1, 2, 1, 2, 2, 2, 0, 2, 2, 2, 1, 0, 0],
            [1, 2, 2, 1, 1, 1, 0, 1, 1, 1, 2, 0, 2, 1, 2, 1, 1, 0, 0],
            [2, 0, 2, 1, 0, 0, 1, 0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0, 0],
-          ]
+          ])
 
-matrix = np.array(matrix2) - matrix1
+matrix = matrix2 - matrix1
 
 for i in range(size):
     print(*matrix[i], sep=' ')
