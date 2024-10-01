@@ -60,7 +60,7 @@ class StonesDetection:
         # пороговая обработка
         binary_image = self._get_binary_image(blurred_image)
 
-        matrix = np.array([ [0] * self._size for i in range(self._size) ])
+        matrix = np.zeros((self._size, self._size), dtype=int)
         
         if self.is_show_processed_img:
             processed_image = binary_image.copy()
