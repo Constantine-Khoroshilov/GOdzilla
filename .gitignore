@@ -3,3 +3,5 @@
 *.sln
 *.pyproj
 *.pyproj.user
+*.txt
+*.png
