@@ -3,7 +3,7 @@
 *.sln
 *.pyproj
 *.pyproj.user
-*.txt
-*.png
 
-StonesDetection/
+StonesDetection/test/
+StonesDetection/.vs/
+Schemes/
