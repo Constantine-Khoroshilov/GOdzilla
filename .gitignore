@@ -1,9 +1,4 @@
 *.drawio
 *.bkp
-*.sln
-*.pyproj
-*.pyproj.user
 
-StonesDetection/test/
-StonesDetection/.vs/
 Schemes/
