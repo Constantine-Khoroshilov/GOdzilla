@@ -1,4 +1,24 @@
-*.drawio
-*.bkp
+# Игнорируем все файлы и папки
+*
 
-Schemes/
+# Исключаем папку static из игнорирования
+!static/
+
+# В папке static не игнорируем указанные форматы
+!static/**/*.js
+!static/**/*.css
+!static/**/*.webp
+!static/**/*.png
+!static/**/*.jpeg
+!static/**/*.jpg
+!static/**/*.svg
+!static/**/*.gif
+!static/**/*.fig
+
+# Следим только за .py, .md и .txt файлами в корне и подкаталогах
+!*.py
+!*.md
+!*.txt
+!**/*.py
+!**/*.md
+!**/*.txt
