@@ -1,19 +1,21 @@
 # Игнорируем все файлы и папки
 *
 
+!server/
+
 # Исключаем папку static из игнорирования
-!server/static/
+!static/
 
 # В папке static не игнорируем указанные форматы
-!server/static/**/*.js
-!server/static/**/*.css
-!server/static/**/*.webp
-!server/static/**/*.png
-!server/static/**/*.jpeg
-!server/static/**/*.jpg
-!server/static/**/*.svg
-!server/static/**/*.gif
-!server/static/**/*.fig
+!static/**/*.js
+!static/**/*.css
+!static/**/*.webp
+!static/**/*.png
+!static/**/*.jpeg
+!static/**/*.jpg
+!static/**/*.svg
+!static/**/*.gif
+!static/**/*.fig
 
 # Следим только за .py, .md и .txt файлами в корне и подкаталогах
 !*.py
