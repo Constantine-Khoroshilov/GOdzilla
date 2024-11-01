@@ -2,26 +2,28 @@
 
 
 
-## server
+## Сервер
 
 
 ### Запуск
 
-**Установка необходимых пакетов**
+Установка необходимых пакетов:
 
 ```bash
 pip install fastapi uvicorn aiofiles python-multipart
 ```
 
-**Запуск сервера**
+Запуск сервера:
 
 ```bash
 python server.py
 ```
 
-**Адрес сайта**
+Адрес сайта:
 
-`http://localhost:8000`
+```
+http://localhost:8000
+```
 
 При открытии этого сайта в браузере загрузится `index.html`, который (должен быть) расположен в директории `server`. 
 
@@ -30,9 +32,13 @@ python server.py
 
 ### Описание запросов API
 
-**Принцип работы API**
-
 Все запросы клиента к серверу должны производится средствами JavaScript, данные отправляются и принимаются в формате JSON (кроме отправки видеофайла, он отправляется путем создания формы). В `index.html` уже есть базовый пример с загрузкой видеофайла на сервер.
+
+Чтобы посмотреть и протестировать API без клиента, можно воспользоваться документацией:
+
+```
+http://localhost:8000/docs
+```
 
 **GET запрос на генерацию ID видеофайла:**
 
@@ -49,8 +55,8 @@ python server.py
 *Пример ответа сервера в формате JSON:*
 ```json
 { 
-	"video_id": "fbd53161-0b8b-4ced-bedc-0f3c26e25cf0", 
-	"status": "not_uploaded" 
+    "video_id": "fbd53161-0b8b-4ced-bedc-0f3c26e25cf0", 
+    "status": "not_uploaded" 
 }
 ```
 
@@ -75,8 +81,8 @@ python server.py
 *Пример ответа сервера в формате JSON при успешном выполнении запроса:*
 ```json
 { 
-	"video_id": "fbd53161-0b8b-4ced-bedc-0f3c26e25cf0", 
-	"status": "uploaded" 
+   "video_id": "fbd53161-0b8b-4ced-bedc-0f3c26e25cf0", 
+   "status": "uploaded" 
 }
 ```
 
@@ -88,7 +94,7 @@ python server.py
 
 *URL запроса:*
 ```
-/cancel_uploading?video_id=<ID>
+/cancel_uploading?video_id=<ID видеофайла>
 ```
 
 *Тело запроса:* отсутствует.
@@ -96,7 +102,7 @@ python server.py
 *Пример ответа сервера в формате JSON при успешном выполнении запроса:*
 ```json
 { 
-	"video_id": "fbd53161-0b8b-4ced-bedc-0f3c26e25cf0", 
-	"status": "not_uploaded" 
+    "video_id": "fbd53161-0b8b-4ced-bedc-0f3c26e25cf0", 
+    "status": "not_uploaded" 
 }
 ```
