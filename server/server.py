@@ -72,7 +72,7 @@ class Video:
         self.interval = None
         self.board_area = None
 
-    async def remove(self):
+    async def remove_file(self):
         ''' Удаляет видеофайл (не объект) '''
         await asyncio.to_thread(os.remove, self.path)
         self.path = None
@@ -130,7 +130,7 @@ def upload_decorator(upload_func):
 
 @app.post('/upload')
 @upload_decorator
-async def test(video, file):
+async def upload(video, file):
     video.status = Video.Status.UPLOADING
     video.path = os.path.join(videos_folder, f'{video.id}-{file.filename}')
     try:
@@ -147,12 +147,12 @@ async def test(video, file):
 
     except UploadingCancelled as exception:
         video.status = Video.Status.NOT_UPLOADED
-        await video.remove()
+        await video.remove_file()
         return {'video_id': video.id, 'status': video.status}
 
     except Exception as exception:
         video.status = Video.Status.NOT_UPLOADED
-        await video.remove()
+        await video.remove_file()
         raise HTTPException(500, f'Internal server error: {exception}')
 
     video.status = Video.Status.UPLOADED
