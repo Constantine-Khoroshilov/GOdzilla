@@ -1,3 +1,4 @@
+from concurrent.futures import thread
 from xml.dom.expatbuilder import theDOMImplementation
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
@@ -67,34 +68,12 @@ class Video:
             self.start = start
             self.stop = stop
 
-    class Processing:
-        ''' Класс для отслеживания процесса обработки видеозаписи '''
-        class Status(enum.Enum):
-            STOPPED = 'stopped'
-            RUNNING = 'running'
-            FAILURE = 'failure'
-
-        def __init__(self):
-            self.status = Video.Processing.Status.STOPPED
-            self.error_message = None
-
-        def run(self):
-            self.status = Video.Processing.Status.RUNNING
-            self.error_message = None
-
-        def stop(self):
-            self.status = Video.Processing.Status.STOPPED
-
-        def is_stopped(self):
-            return self.status == Video.Processing.Status.STOPPED
-
     def __init__(self, video_id):
         self.id = video_id
         self.status = Video.Status.NOT_UPLOADED
         self.path = None
         self.interval = None
         self.board_area = None
-        self.processing = Video.Processing()
 
     async def remove_file(self):
         ''' Удаляет видеофайл (не объект) '''
@@ -114,31 +93,71 @@ class Video:
         '''
         self.interval = Video.TimeInterval(start, stop)
 
-    def is_prepared(self):
+
+
+        
+processings = {}
+
+
+class Processing:
+    def to_thread(func):
+        ''' Декоратор для запуска функции в отдельном потоке '''
+        def wrapper(*args, **kwargs):
+            threading.Thread(target=func, args=args, kwargs=kwargs).start()
+        return wrapper
+
+    class Status(enum.Enum):
+        STOPPED = 'stopped'
+        RUNNING = 'running'
+        FAILURE = 'failure'
+
+    def __init__(self, video):
+        self._video = video
+        self.status = Processing.Status.STOPPED
+        self.error_message = None
+        processings[video.id] = self
+
+    def is_video_prepared(self):
         ''' Возвращает True, если видеозапись готова к обработке ''' 
-        # return (
-        #     self.status == Video.Status.UPLOADED and
-        #     self.interval is not None and 
-        #     self.board_area is not None)
+        return (
+            self._video.status == Video.Status.UPLOADED and
+            self._video.interval is not None and 
+            self._video.board_area is not None)
+
+    def run(self):
+        ''' Запускает обработку подготовленной видеозаписи в отдельном потоке.
+            Если обработка началась вернет True, иначе - False
+        '''
+        if not self.is_video_prepared():
+            return False # видеозапись не подготовлена к обработке
+
+        self._video.status = Video.Status.PROCESSING
+        self.status = Processing.Status.RUNNING
+        self.start_processing()
         return True
 
-def video_processing(video):
-    video.processing.run()
-    try:
-        # начало функции обработки
-        video_name, _ = os.path.splitext(os.path.basename(video.path))
-        sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
+    def stop(self):
+        self._video.status = Video.Status.UPLOADED
+        self.status = Processing.Status.STOPPED
 
-        with open(sgf_path, 'w') as f:
-            pass
-        # конец функции обработки
-        video.status = Video.Status.PROCESSED
-        video.processing.stop()
+    @to_thread
+    def start_processing(self):
+        try:
+            # начало функции обработки
+            video_name, _ = os.path.splitext(os.path.basename(self._video.path))
+            sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
 
-    except Exception as exception:
-        video.status = Video.Status.UPLOADED
-        video.processing.status = Video.Processing.Status.FAILURE
-        video.processing.error_message = f'Error in the processing process: {exception}' 
+            with open(sgf_path, 'w') as f:
+                pass
+            # конец функции обработки
+
+            self._video.status = Video.Status.PROCESSED
+            self.status = Processing.Status.STOPPED
+
+        except Exception as exception:
+            self._video.status = Video.Status.UPLOADED
+            self.status = Processing.Status.FAILURE
+            self.error_message = f'Error: {exception}' 
 
 
 
@@ -203,9 +222,7 @@ async def upload(video, file):
         await video.remove_file()
         raise HTTPException(500, f'Internal server error: {exception}')
 
-    if video.is_prepared():
-        video.status = Video.Status.PROCESSING
-        threading.Thread(target=video_processing, args=(video,)).start()
+    if Processing(video).run():
         return {'video_id': video.id, 'status': video.status}
 
     video.status = Video.Status.UPLOADED
