@@ -40,7 +40,7 @@ def generate_video_id():
             return video_id
 
 
-def check_video_id(video_id):
+def exists_video_id(video_id):
     if video_id not in videos:
         raise HTTPException(404, 'The video ID was not found')
 
@@ -104,14 +104,12 @@ class UploadingCancelled(Exception):
     def __init__(self):
         super().__init__('Uploading was cancelled')
 
-def upload_decorator(upload_func):
+def upload_request_validator(upload_func):
     ''' Декоратор для проверки правильности запроса перед загрузкой видеофайла '''
     async def upload(video_id: str, file: UploadFile = File(...)):
-        check_video_id(video_id)
+        exists_video_id(video_id)
         video = videos[video_id]
 
-        if not file:
-            raise HTTPException(400, 'The video file is missing')
         if video.status != Video.Status.NOT_UPLOADED:
             raise HTTPException(400, 'The video file has already been uploaded')
 
@@ -129,7 +127,7 @@ def upload_decorator(upload_func):
     return upload
 
 @app.post('/upload')
-@upload_decorator
+@upload_request_validator
 async def upload(video, file):
     video.status = Video.Status.UPLOADING
     video.path = os.path.join(videos_folder, f'{video.id}-{file.filename}')
@@ -162,7 +160,7 @@ async def upload(video, file):
 
 @app.post('/cancel_uploading')
 async def cancel_uploading(video_id: str):
-    check_video_id(video_id)
+    exists_video_id(video_id)
     video = videos[video_id]
     
     if video.status != Video.Status.UPLOADING:
