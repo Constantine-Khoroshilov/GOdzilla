@@ -1,11 +1,13 @@
+from xml.dom.expatbuilder import theDOMImplementation
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from enum import Enum
+import threading
 import aiofiles
 import asyncio
 import uvicorn
 import uuid
+import enum
 import os
 
 
@@ -46,7 +48,7 @@ def exists_video_id(video_id):
 
 
 class Video:
-    class Status(Enum):
+    class Status(enum.Enum):
         NOT_UPLOADED = 'not_uploaded'
         UPLOADING = 'uploading'
         UPLOADED = 'uploaded'
@@ -65,12 +67,34 @@ class Video:
             self.start = start
             self.stop = stop
 
+    class Processing:
+        ''' Класс для отслеживания процесса обработки видеозаписи '''
+        class Status(enum.Enum):
+            STOPPED = 'stopped'
+            RUNNING = 'running'
+            FAILURE = 'failure'
+
+        def __init__(self):
+            self.status = Video.Processing.Status.STOPPED
+            self.error_message = None
+
+        def run(self):
+            self.status = Video.Processing.Status.RUNNING
+            self.error_message = None
+
+        def stop(self):
+            self.status = Video.Processing.Status.STOPPED
+
+        def is_stopped(self):
+            return self.status == Video.Processing.Status.STOPPED
+
     def __init__(self, video_id):
         self.id = video_id
         self.status = Video.Status.NOT_UPLOADED
         self.path = None
         self.interval = None
         self.board_area = None
+        self.processing = Video.Processing()
 
     async def remove_file(self):
         ''' Удаляет видеофайл (не объект) '''
@@ -89,6 +113,32 @@ class Video:
             временного интервала видеозаписи, который подлежит обработке
         '''
         self.interval = Video.TimeInterval(start, stop)
+
+    def is_prepared(self):
+        ''' Возвращает True, если видеозапись готова к обработке ''' 
+        # return (
+        #     self.status == Video.Status.UPLOADED and
+        #     self.interval is not None and 
+        #     self.board_area is not None)
+        return True
+
+def video_processing(video):
+    video.processing.run()
+    try:
+        # начало функции обработки
+        video_name, _ = os.path.splitext(os.path.basename(video.path))
+        sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
+
+        with open(sgf_path, 'w') as f:
+            pass
+        # конец функции обработки
+        video.status = Video.Status.PROCESSED
+        video.processing.stop()
+
+    except Exception as exception:
+        video.status = Video.Status.UPLOADED
+        video.processing.status = Video.Processing.Status.FAILURE
+        video.processing.error_message = f'Error in the processing process: {exception}' 
 
 
 
@@ -152,6 +202,11 @@ async def upload(video, file):
         video.status = Video.Status.NOT_UPLOADED
         await video.remove_file()
         raise HTTPException(500, f'Internal server error: {exception}')
+
+    if video.is_prepared():
+        video.status = Video.Status.PROCESSING
+        threading.Thread(target=video_processing, args=(video,)).start()
+        return {'video_id': video.id, 'status': video.status}
 
     video.status = Video.Status.UPLOADED
     return {'video_id': video.id, 'status': video.status}
