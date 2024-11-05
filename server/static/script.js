@@ -1,4 +1,8 @@
-uploadButton.onclick = async function () {
+uploadButton.onclick = function(){
+    uploadVideoToserver();
+}
+
+async function uploadVideoToserver() {
     const file = videoInput.files[0];
 
     const formData = new FormData();
