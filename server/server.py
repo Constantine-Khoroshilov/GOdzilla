@@ -67,8 +67,8 @@ class Processing:
         ''' Запускает обработку подготовленной видеозаписи в отдельном потоке.
             Если обработка началась вернет True, иначе - False
         '''
-        if not self._is_video_prepared():
-            return False # видеозапись не подготовлена к обработке
+        # if not self._is_video_prepared():
+        #    return False # видеозапись не подготовлена к обработке
 
         self._video.status = Video.Status.PROCESSING
         self.status = Processing.Status.RUNNING
@@ -79,6 +79,19 @@ class Processing:
     def stop(self):
         self._video.status = Video.Status.UPLOADED
         self.status = Processing.Status.STOPPED
+
+    class ProcessingCancelled(Exception):
+        ''' Исключение, которое возникает при отмене обработки видеофайла '''
+        def __init__(self):
+            super().__init__('Processing was cancelled')
+
+    def break_processing(self):
+        ''' Метод, вызывающий исключение ProcessingCancelled,
+            если процесс обработки был остановлен, вызывается 
+            только внутри функции обработки видеозаписи
+        '''
+        if self.status == Processing.Status.STOPPED:
+            raise Processing.ProcessingCancelled()
 
     def _is_video_prepared(self):
         ''' Возвращает True, если видеозапись готова к обработке ''' 
@@ -95,17 +108,27 @@ class Processing:
 
     @to_thread
     def _start_processing(self):
-        try:
-            # начало функции обработки
-            video_name, _ = os.path.splitext(os.path.basename(self._video.path))
-            sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
+        def test(sgf_path):
+            import time
+            for _ in range(5):
+                self.break_processing()
+                time.sleep(3)
 
             with open(sgf_path, 'w') as f:
                 pass
-            # конец функции обработки
 
+        video_name, _ = os.path.splitext(os.path.basename(self._video.path))
+        sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
+
+        try:
+            # функция обработки видеозаписи 
+            test(sgf_path)
             self._video.status = Video.Status.PROCESSED
             self.status = Processing.Status.STOPPED
+
+        except Processing.ProcessingCancelled:
+            if os.path.exists(sgf_path):
+                os.remove(sgf_path)
 
         except Exception as exception:
             self._video.status = Video.Status.UPLOADED
@@ -158,7 +181,6 @@ class Video:
             временного интервала видеозаписи, который подлежит обработке
         '''
         self.interval = Video.TimeInterval(start, stop)
-
 
 
 
@@ -240,6 +262,34 @@ async def cancel_uploading(video_id: str):
         raise HTTPException(400, 'The video file is not being uploaded')
 
     video.status = Video.Status.NOT_UPLOADED
+    return {'video_id': video.id, 'status': video.status}
+
+
+
+@app.post('/cancel_processing')
+async def cancel_processing(video_id: str):
+    exists_video_id(video_id)
+    video = videos[video_id]
+    
+    if video.status != Video.Status.PROCESSING:
+        raise HTTPException(400, 'The video file is not being processed')
+
+    video.processing.stop()
+    return {'video_id': video.id, 'status': video.status}
+
+
+@app.post('/start_processing')
+async def start_processing(video_id: str):
+    exists_video_id(video_id)
+    video = videos[video_id]
+    
+    if video.status != Video.Status.UPLOADED:
+        raise HTTPException(400, 
+            'The video file is being processed, ' + 
+            'maybe it has already been processed or ' +
+            'it has not yet been uploaded')
+
+    video.processing.run()
     return {'video_id': video.id, 'status': video.status}
 
 
