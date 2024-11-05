@@ -108,7 +108,11 @@ class Processing:
 
     @to_thread
     def _start_processing(self):
-        def test(sgf_path):
+        video_name, _ = os.path.splitext(os.path.basename(self._video.path))
+        sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
+
+        try:
+            # функция обработки видеозаписи 
             import time
 
             for _ in range(5):
@@ -117,13 +121,8 @@ class Processing:
 
             with open(sgf_path, 'w') as f:
                 f.write('Hello George!')
+            # конец функции обработки
 
-        video_name, _ = os.path.splitext(os.path.basename(self._video.path))
-        sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
-
-        try:
-            # функция обработки видеозаписи 
-            test(sgf_path)
             self._video.sgf_path = sgf_path
             self._video.status = Video.Status.PROCESSED
             self.status = Processing.Status.STOPPED
@@ -320,10 +319,10 @@ async def download_sgf(video_id: str, file_name: str = None):
     video = videos[video_id]
 
     if video.status != Video.Status.PROCESSED:
-        raise HTTPException('The video file has not been processed')
+        raise HTTPException(400, 'The video file has not been processed')
 
-    return FileResponse(video.sgf_path,
-                        filename = file_name if file_name is not None else video.sgf_path)
+    filename = file_name if file_name is not None else os.path.basename(video.sgf_path)
+    return FileResponse(video.sgf_path, filename = filename)
 
 
 if __name__ == '__main__':
