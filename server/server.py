@@ -110,12 +110,13 @@ class Processing:
     def _start_processing(self):
         def test(sgf_path):
             import time
+
             for _ in range(5):
                 self.break_processing()
-                time.sleep(3)
+                time.sleep(5)
 
             with open(sgf_path, 'w') as f:
-                pass
+                f.write('Hello George!')
 
         video_name, _ = os.path.splitext(os.path.basename(self._video.path))
         sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
@@ -123,6 +124,7 @@ class Processing:
         try:
             # функция обработки видеозаписи 
             test(sgf_path)
+            self._video.sgf_path = sgf_path
             self._video.status = Video.Status.PROCESSED
             self.status = Processing.Status.STOPPED
 
@@ -160,6 +162,7 @@ class Video:
         self.id = video_id
         self.status = Video.Status.NOT_UPLOADED
         self.path = None
+        self.sgf_path = None
         self.interval = None
         self.board_area = None
         self.processing = Processing(self)
@@ -292,6 +295,35 @@ async def start_processing(video_id: str):
     video.processing.run()
     return {'video_id': video.id, 'status': video.status}
 
+
+@app.get('/get_processing_status')
+async def get_processing_status(video_id: str):
+    exists_video_id(video_id)
+    video = videos[video_id]
+
+    response = {
+        'video_id': video.id, 
+        'status': video.status, 
+        'processing': video.processing.status
+    }
+
+    if video.processing.status == Processing.Status.FAILURE:
+        response['error'] = video.processing.error_message
+    
+    return response
+
+
+
+@app.get('/download_sgf')
+async def download_sgf(video_id: str, file_name: str = None):
+    exists_video_id(video_id)
+    video = videos[video_id]
+
+    if video.status != Video.Status.PROCESSED:
+        raise HTTPException('The video file has not been processed')
+
+    return FileResponse(video.sgf_path,
+                        filename = file_name if file_name is not None else video.sgf_path)
 
 
 if __name__ == '__main__':
