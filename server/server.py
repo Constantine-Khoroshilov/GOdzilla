@@ -161,12 +161,13 @@ class Video:
         self.id = video_id
         self.status = Video.Status.NOT_UPLOADED
         self.path = None
-        self.sgf_path = None
         self.interval = None
         self.board_area = None
         self.processing = Processing(self)
+        # путь к полученному sgf файлу после обработки
+        self.sgf_path = None
 
-    async def remove_file(self):
+    async def remove_video(self):
         ''' Удаляет видеофайл (не объект) '''
         await asyncio.to_thread(os.remove, self.path)
         self.path = None
@@ -239,12 +240,12 @@ async def upload(video, file):
 
     except UploadingCancelled as exception:
         video.status = Video.Status.NOT_UPLOADED
-        await video.remove_file()
+        await video.remove_video()
         return {'video_id': video.id, 'status': video.status}
 
     except Exception as exception:
         video.status = Video.Status.NOT_UPLOADED
-        await video.remove_file()
+        await video.remove_video()
         raise HTTPException(500, f'Internal server error: {exception}')
 
     if video.processing.run():
