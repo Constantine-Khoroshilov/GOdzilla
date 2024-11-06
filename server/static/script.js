@@ -1,5 +1,12 @@
-uploadButton.onclick = async function () {
-    const file = videoInput.files[0];
+const uploadButton = document.getElementById('uploadButton');
+const videoInput = document.getElementById('videoInput');
+
+
+uploadButton.onclick = function(){
+    videoInput.click()
+}
+
+async function uploadVideoToServer(file) {
 
     const formData = new FormData();
     formData.append('file', file);
@@ -19,5 +26,11 @@ uploadButton.onclick = async function () {
 
     } catch (error) {
         alert(error);
+    }
+};
+
+videoInput.onchange = function() {
+    if (videoInput.files.length > 0) {
+        uploadVideoToServer(videoInput.files[0]);
     }
 };

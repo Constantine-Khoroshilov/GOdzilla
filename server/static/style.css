@@ -1,5 +1,10 @@
-body{
-    background-image: url("Godzillas_background.png");
-    background-repeat: no-repeat;
-    background-position: 50% 5%;
+input{
+    display: none;
 }
+
+body{
+    background-image: url("Godzillas_background_cut.png");
+    background-repeat: no-repeat;
+    background-position: 50% 0%;
+}
+
