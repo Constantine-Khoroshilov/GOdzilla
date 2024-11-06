@@ -1,4 +1,5 @@
 uploadButton.onclick = function(){
+    
     uploadVideoToserver();
 }
 
