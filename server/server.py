@@ -1,3 +1,4 @@
+from sre_constants import SUCCESS
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -47,28 +48,24 @@ def exists_video_id(video_id):
 
 
 class Processing:
-    ''' Класс для обработки видеозаписи.
-
-        Этот класс управляет процессом обработки видео, включая 
-        проверку готовности видео к обработке, запуск обработки 
-        в отдельном потоке и управление статусом обработки.
-    '''
     class Status(enum.Enum):
         STOPPED = 'stopped'
         RUNNING = 'running'
         FAILURE = 'failure'
+        SUCCESS = 'success'
 
     def __init__(self, video):
         self._video = video
         self.status = Processing.Status.STOPPED
         self.error_message = None
+        self.sgf_path = None
 
     def run(self):
         ''' Запускает обработку подготовленной видеозаписи в отдельном потоке.
             Если обработка началась вернет True, иначе - False
         '''
-        # if not self._is_video_prepared():
-        #    return False # видеозапись не подготовлена к обработке
+        if not self._is_video_prepared():
+           return False
 
         self._video.status = Video.Status.PROCESSING
         self.status = Processing.Status.RUNNING
@@ -99,7 +96,7 @@ class Processing:
             self._video.status == Video.Status.UPLOADED and
             self._video.interval is not None and 
             self._video.board_area is not None)
-
+    
     def to_thread(func):
         ''' Декоратор для запуска функции в отдельном потоке '''
         def wrapper(*args, **kwargs):
@@ -110,7 +107,6 @@ class Processing:
     def _start_processing(self):
         video_name, _ = os.path.splitext(os.path.basename(self._video.path))
         sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
-
         try:
             # функция обработки видеозаписи 
             import time
@@ -125,11 +121,12 @@ class Processing:
 
             self._video.sgf_path = sgf_path
             self._video.status = Video.Status.PROCESSED
-            self.status = Processing.Status.STOPPED
+            self.status = Processing.Status.SUCCESS
 
         except Processing.ProcessingCancelled:
-            if os.path.exists(sgf_path):
-                os.remove(sgf_path)
+            if os.path.exists(self.sgf_path):
+                os.remove(self.sgf_path)
+                self.sgf_path = None
 
         except Exception as exception:
             self._video.status = Video.Status.UPLOADED
@@ -164,10 +161,8 @@ class Video:
         self.interval = None
         self.board_area = None
         self.processing = Processing(self)
-        # путь к полученному sgf файлу после обработки
-        self.sgf_path = None
 
-    async def remove_video(self):
+    async def remove(self):
         ''' Удаляет видеофайл (не объект) '''
         await asyncio.to_thread(os.remove, self.path)
         self.path = None
@@ -240,12 +235,12 @@ async def upload(video, file):
 
     except UploadingCancelled as exception:
         video.status = Video.Status.NOT_UPLOADED
-        await video.remove_video()
+        await video.remove()
         return {'video_id': video.id, 'status': video.status}
 
     except Exception as exception:
         video.status = Video.Status.NOT_UPLOADED
-        await video.remove_video()
+        await video.remove()
         raise HTTPException(500, f'Internal server error: {exception}')
 
     if video.processing.run():
@@ -281,20 +276,6 @@ async def cancel_processing(video_id: str):
     return {'video_id': video.id, 'status': video.status}
 
 
-@app.post('/start_processing')
-async def start_processing(video_id: str):
-    exists_video_id(video_id)
-    video = videos[video_id]
-    
-    if video.status != Video.Status.UPLOADED:
-        raise HTTPException(400, 
-            'The video file is being processed, ' + 
-            'maybe it has already been processed or ' +
-            'it has not yet been uploaded')
-
-    video.processing.run()
-    return {'video_id': video.id, 'status': video.status}
-
 
 @app.get('/get_processing_status')
 async def get_processing_status(video_id: str):
@@ -322,8 +303,11 @@ async def download_sgf(video_id: str, file_name: str = None):
     if video.status != Video.Status.PROCESSED:
         raise HTTPException(400, 'The video file has not been processed')
 
-    filename = file_name if file_name is not None else os.path.basename(video.sgf_path)
+    sgf_name = os.path.basename(video.processing.sgf_path)
+    filename = f'{file_name}.txt' if file_name is not None else sgf_name
+
     return FileResponse(video.sgf_path, filename = filename)
+
 
 
 if __name__ == '__main__':
