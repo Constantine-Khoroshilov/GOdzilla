@@ -1,7 +1,8 @@
-from sre_constants import SUCCESS
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from typing import List
 import threading
 import aiofiles
 import asyncio
@@ -93,7 +94,8 @@ class Processing:
     def _is_video_prepared(self):
         ''' Возвращает True, если видеозапись готова к обработке ''' 
         return (
-            self._video.status == Video.Status.UPLOADED and
+            self._video.status != Video.Status.NOT_UPLOADED and
+            self._video.status != Video.Status.UPLOADING and
             self._video.interval is not None and 
             self._video.board_area is not None)
     
@@ -106,7 +108,7 @@ class Processing:
     @to_thread
     def _start_processing(self):
         video_name, _ = os.path.splitext(os.path.basename(self._video.path))
-        sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
+        self.sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
         try:
             # функция обработки видеозаписи 
             import time
@@ -115,11 +117,10 @@ class Processing:
                 self.break_processing()
                 time.sleep(5)
 
-            with open(sgf_path, 'w') as f:
+            with open(self.sgf_path, 'w') as f:
                 f.write('Hello George!')
             # конец функции обработки
 
-            self._video.sgf_path = sgf_path
             self._video.status = Video.Status.PROCESSED
             self.status = Processing.Status.SUCCESS
 
@@ -142,18 +143,21 @@ class Video:
         PROCESSING = 'processing'
         PROCESSED = 'processed'
 
-    class BoardArea:
-        def __init__(self, x1, y1, x2, y2):
-            self.x1 = x1
-            self.x2 = x2
-            self.y1 = y1
-            self.y2 = y2
+    class TimeInterval(BaseModel):
+        ''' Начальная и конечная точки (в миллисекундах) 
+            временного интервала видеозаписи, который подлежит обработке
+        '''
+        start: int
+        stop: int
 
-    class TimeInterval:
-        def __init__(self, start, stop):
-            self.start = start
-            self.stop = stop
+    class BoardArea(BaseModel):
+        class Stone(BaseModel):
+            x: int
+            y: int
 
+        stone_radius: int
+        stones: List[Stone]
+        
     def __init__(self, video_id):
         self.id = video_id
         self.status = Video.Status.NOT_UPLOADED
@@ -166,19 +170,6 @@ class Video:
         ''' Удаляет видеофайл (не объект) '''
         await asyncio.to_thread(os.remove, self.path)
         self.path = None
-
-    def set_board_area(self, x1, y1, x2, y2):
-        ''' Задает область игровой доски:
-            x1, y1 - левая верхняя точка области
-            x2, y2 - правая нижняя точка области
-        '''
-        self.board_area = Video.BoardArea(x1, y1, x2, y2)
-
-    def set_interval(self, start, stop):
-        ''' Указывает начальную и конечную точки (в миллисекундах) 
-            временного интервала видеозаписи, который подлежит обработке
-        '''
-        self.interval = Video.TimeInterval(start, stop)
 
 
 
@@ -242,11 +233,33 @@ async def upload(video, file):
         video.status = Video.Status.NOT_UPLOADED
         await video.remove()
         raise HTTPException(500, f'Internal server error: {exception}')
-
-    if video.processing.run():
-        return {'video_id': video.id, 'status': video.status}
-
+    
     video.status = Video.Status.UPLOADED
+    video.processing.run()
+    return {'video_id': video.id, 'status': video.status}
+
+
+
+class ProcessingData(BaseModel):
+    time_interval: Video.TimeInterval
+    board_area: Video.BoardArea
+
+
+@app.post('/send_processing_data')
+async def send_processing_data(video_id: str, data: ProcessingData):
+    exists_video_id(video_id)
+    video = videos[video_id]
+
+    if video.status == Video.Status.PROCESSING:
+        raise HTTPException(400, 'The video file is being processed')
+
+    if len(data.board_area.stones) != 5:
+        raise HTTPException(400, 'The number of stones is not five')
+
+    video.interval = data.time_interval
+    video.board_area = data.board_area
+
+    video.processing.run()
     return {'video_id': video.id, 'status': video.status}
 
 
@@ -306,7 +319,7 @@ async def download_sgf(video_id: str, file_name: str = None):
     sgf_name = os.path.basename(video.processing.sgf_path)
     filename = f'{file_name}.txt' if file_name is not None else sgf_name
 
-    return FileResponse(video.sgf_path, filename = filename)
+    return FileResponse(video.processing.sgf_path, filename = filename)
 
 
 
