@@ -168,7 +168,7 @@ def get_video_by_id(video_id: str = None):
     '''
     if video_id is None:
         video = Video(generate_video_id())
-        videos[video_id] = video
+        videos[video.id] = video
         return video
     
     return videos[video_id]
