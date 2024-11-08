@@ -26,7 +26,7 @@ async def root():
 
 
 def fetch_video(video_id):
-    if exists_video_id(video_id):
+    if not exists_video_id(video_id):
         raise HTTPException(404, 'The video ID was not found')
     return get_video_by_id(video_id)
 
