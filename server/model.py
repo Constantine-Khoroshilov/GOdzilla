@@ -24,7 +24,7 @@ def generate_video_id():
 
 
 def exists_video_id(video_id):
-    return video_id not in videos
+    return video_id in videos
 
     
 def to_thread(func):
