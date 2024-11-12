@@ -5,19 +5,36 @@ input{
 body{
     background-image: url("Godzilla_cut_transparent.png");
     background-repeat: no-repeat;
-    background-position: 50% 0%;
-    background-color:darkgrey;
+    background-position: 50vh 0vw;
+    background-color: lightgrey;
+}
+
+.navigation{
+    position: absolute;
+    background-color: black;
+    height: 100vh;
+    top: 0px;
+    left: 0px;
+    width: 20vw;
 }
 
 .main_msg{
     position: absolute;
-    top: 60vh;
+    top: 63vh;
     left: 35vw;
 }
 
 #uploadButton{
     position: relative;
-    top: 70vh;
+    top: 73vh;
     left: 40vw;
+}
+
+#open_man_button{
+    background-color: black;
+    color: white;
+    position: relative;
+    top: 73vh;
+    left: 50vw;
 }
 
