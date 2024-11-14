@@ -4,7 +4,7 @@
 # Исключаем ниже указанные папки из игнорирования
 !server/
 !server/static/
-!hand_recognition/
+!hands_recognition/
 
 # В ниже указанных папках не игнорируем указанные форматы
 !server/*.html
@@ -17,7 +17,7 @@
 !server/static/**/*.svg
 !server/static/**/*.gif
 !server/static/**/*.fig
-!hand_recognition/*.pt
+!hands_recognition/*.pt
 
 # Следим только за .py, .md и .txt файлами в корне и подкаталогах
 !*.py
