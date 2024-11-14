@@ -1,12 +1,15 @@
 from ultralytics import YOLO
+import numpy as np
 
-def HandFinder(numpydata):
-    model = YOLO(r"..\best.pt")# путь до модели
-    results = model.predict(source=numpydata,save=False)
-    AraryOfType =[]
-    i=0
+def detect_hands(image: np.ndarray):
+    model = YOLO(r"..\best.pt") # путь до модели
+    results = model.predict(source=image, save=False)
+
+    arary_of_type = []
+    i = 0
     for result in results:
-        AraryOfType.append(len(results[i].boxes.conf.cpu().numpy())!=0)
-        i+=1
-    return AraryOfType[0]
+        arary_of_type.append(len(results[i].boxes.conf.cpu().numpy()) != 0)
+        i += 1
+
+    return arary_of_type[0]
 
