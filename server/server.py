@@ -97,7 +97,7 @@ async def upload(video, file):
 
 
 class ProcessingData(BaseModel):
-    time_interval: Video.TimeInterval
+    segment: Video.Segment
     board_area: Video.BoardArea
 
 @app.post('/send_processing_data')
@@ -107,10 +107,7 @@ async def send_processing_data(video_id: str, data: ProcessingData):
     if video.status == Video.Status.PROCESSING:
         raise HTTPException(400, 'The video file is being processed')
 
-    if len(data.board_area.stones) != 5:
-        raise HTTPException(400, 'The number of stones is not five')
-
-    video.interval = data.time_interval
+    video.segment = data.segment
     video.board_area = data.board_area
 
     video.processing.run()

@@ -132,26 +132,23 @@ class Video:
         PROCESSING = 'processing'
         PROCESSED = 'processed'
 
-    class TimeInterval(BaseModel):
-        ''' Начальная и конечная точки (в миллисекундах) 
-            временного интервала видеозаписи, который подлежит обработке
+    class Segment(BaseModel):
+        ''' Подлежащий обработке отрезок видеозаписи
         '''
         start: int
         stop: int
 
     class BoardArea(BaseModel):
-        class Stone(BaseModel):
-            x: int
-            y: int
-
-        stone_radius: int
-        stones: List[Stone]
+        x1: int
+        y1: int
+        x2: int
+        y2: int
         
     def __init__(self, video_id):
         self.id = video_id
         self.status = Video.Status.NOT_UPLOADED
         self.path = None
-        self.interval = None
+        self.segment = None
         self.board_area = None
         self.processing = Processing(self)
 
