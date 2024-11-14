@@ -3,8 +3,21 @@ input{
 }
 
 body{
-    background-image: url("Godzillas_background_cut.png");
+    background-image: url("Godzilla_cut_transparent.png");
     background-repeat: no-repeat;
     background-position: 50% 0%;
+    background-color:darkgrey;
+}
+
+.main_msg{
+    position: absolute;
+    top: 60vh;
+    left: 35vw;
+}
+
+#uploadButton{
+    position: relative;
+    top: 70vh;
+    left: 40vw;
 }
 
