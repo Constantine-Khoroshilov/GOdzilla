@@ -11,6 +11,8 @@ body{
 
 .navigation{
     position: absolute;
+    display: grid;
+    row-gap: 10px;
     background-color: black;
     height: 100vh;
     top: 0px;
