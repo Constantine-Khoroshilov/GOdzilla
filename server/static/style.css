@@ -22,12 +22,21 @@ body{
 }
 
 .navi > .navi-head-wrapper{
+    background-color: rgb(122, 122, 122);
+}
+
+.navi > .navi-head-wrapper > .navi-head{
+    margin-left: 7vw;
     color: white;
+}
+
+.navi > .navi-head-wrapper > .navi-head > span{
+    color: black;
 }
 
 button.navi-button{
     margin: 10px;
-    background-color: darkgrey;
+    background-color: rgb(122, 122, 122);
     border-radius: 20px;
 }
 
