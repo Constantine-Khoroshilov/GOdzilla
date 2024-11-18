@@ -9,9 +9,10 @@ body{
     background-color: lightgrey;
 }
 
-.navigation{
+.navi{
     position: absolute;
     display: grid;
+    grid-template-rows: 10vh repeat(4, 1fr) 3fr 1fr;
     row-gap: 10px;
     background-color: black;
     height: 100vh;
@@ -20,7 +21,17 @@ body{
     width: 20vw;
 }
 
-.main_msg{
+.navi > .navi-head-wrapper{
+    color: white;
+}
+
+button.navi-button{
+    margin: 10px;
+    background-color: darkgrey;
+    border-radius: 20px;
+}
+
+.main-msg{
     position: absolute;
     top: 63vh;
     left: 35vw;
@@ -32,7 +43,7 @@ body{
     left: 40vw;
 }
 
-#open_man_button{
+#open-man-button{
     background-color: black;
     color: white;
     position: relative;
