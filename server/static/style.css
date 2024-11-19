@@ -1,67 +1,168 @@
-body{
+body {
     display: grid;
     grid-template-columns: 1fr 3fr;
     margin: 0px;
+    min-height: 100vh;
 }
 
-.main{
-    background-image: url("Godzilla_cut_transparent.png");
+.main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 3fr repeat(3, 1fr);
     background-repeat: no-repeat;
     background-position: top;
+    justify-content: center;
     background-color: lightgrey;
-    height: 100vh;
 }
 
-input{
+.main img {
+        grid-column: span 2; /* Изображение занимает две колонки */
+        width: 55%; 
+        margin: auto;
+}
+
+input {
     display: none;
 }
 
-.navi{
+.navi {
     display: grid;
+    grid-column: 1; 
     grid-template-rows: 10vh 3vh repeat(4, 1fr) 3fr 1fr;
     row-gap: 10px;
     background-color: black;
-    height: 100vh;
 }
 
-.navi > .navi-head-wrapper{
+.navi > .navi-head-wrapper {
+    display: flex;
+    justify-content: center;
     background-color: rgb(122, 122, 122);
 }
 
-.navi-head{
-    margin-left: 7vw;
+.navi-head {
     color: white;
 }
 
-.navi-head > span{
+.navi-head > span {
     color: black;
 }
 
-button.navi-button{
-    margin: 10px;
+.menu-toggle {
+    display: none; /* Прячем кнопку на больших экранах */
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: black;
+    cursor: pointer;
+    z-index: 101;
+}
+
+button.navi-button {
+    margin: 10px 20px 20px 10px;
     background-color: rgb(122, 122, 122);
     border-radius: 15px;
     color: white;
 }
 
-.main-head{
-    position: relative;
-    top: 65%;
-    left: 28%;
-    /* left: 35vw; */
+.main-head {
+        grid-column: span 2; 
+        text-align: center;
+        margin: 20px 0;
 }
 
-#upload-button{
+#upload-button {
+    height: 80%;
+    width: 50%;
     position: relative;
-    top: 73vh;
-    left: 40vw;
+    grid-column: 1;
+    margin: auto;
 }
 
-#open-man-button{
+#open-man-button {
     background-color: black;
     color: white;
+    height: 80%;
+    width: 50%;
+    grid-column: 2;
     position: relative;
-    top: 73vh;
-    left: 50vw;
+    margin: auto;
 }
 
+#loading-gif {
+    display: none;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    grid-column: 1 / span 2;
+    justify-self: center;
+    align-self: center;
+}
+
+    /* Адаптация для мобильных устройств */
+    @media (max-width: 768px) {
+        body{
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 0px;
+    }
+        .main {
+        display: grid;
+        grid-template-columns: 207px 207px;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; 
+        padding: 0;
+        margin: 0;
+    }
+
+    .main-head {
+        grid-column: span 2; 
+        text-align: center;
+        font-size: xx-large;
+        margin: 20px 0;
+    }
+
+    .main img {
+        width: 70%; 
+        object-fit: cover; 
+        grid-column: span 2; /* Изображение занимает две колонки */
+    }
+    
+
+    .menu-toggle {
+        display: block; /* Показываем кнопку меню */
+    }
+
+    .navi {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        transform: translateX(-100%); /* Прячем меню за пределы экрана */
+    }
+
+    .navi.show {
+        z-index: 5;
+        transform: translateX(0); /* Выдвигаем меню */
+    }
+
+    #upload-button{
+    position: relative;
+    margin: 0px 19px 30px 20px;
+    height: 60%;
+    width: 70%;
+    }
+
+    #open-man-button{
+        background-color: black;
+        color: white;
+        height: 60%;
+        width: 70%;
+        margin: 0px 19px 30px 20px;
+        position: relative;
+    }
+    }
