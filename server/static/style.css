@@ -1,52 +1,57 @@
+body{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    margin: 0px;
+}
+
+.main{
+    background-image: url("Godzilla_cut_transparent.png");
+    background-repeat: no-repeat;
+    background-position: top;
+    background-color: lightgrey;
+    height: 100vh;
+}
+
 input{
     display: none;
 }
 
-body{
-    background-image: url("Godzilla_cut_transparent.png");
-    background-repeat: no-repeat;
-    background-position: 50vh 0vw;
-    background-color: lightgrey;
-}
-
 .navi{
-    position: absolute;
     display: grid;
-    grid-template-rows: 10vh repeat(4, 1fr) 3fr 1fr;
+    grid-template-rows: 10vh 3vh repeat(4, 1fr) 3fr 1fr;
     row-gap: 10px;
     background-color: black;
     height: 100vh;
-    top: 0px;
-    left: 0px;
-    width: 20vw;
 }
 
 .navi > .navi-head-wrapper{
     background-color: rgb(122, 122, 122);
 }
 
-.navi > .navi-head-wrapper > .navi-head{
+.navi-head{
     margin-left: 7vw;
     color: white;
 }
 
-.navi > .navi-head-wrapper > .navi-head > span{
+.navi-head > span{
     color: black;
 }
 
 button.navi-button{
     margin: 10px;
     background-color: rgb(122, 122, 122);
-    border-radius: 20px;
+    border-radius: 15px;
+    color: white;
 }
 
-.main-msg{
-    position: absolute;
-    top: 63vh;
-    left: 35vw;
+.main-head{
+    position: relative;
+    top: 65%;
+    left: 28%;
+    /* left: 35vw; */ */
 }
 
-#uploadButton{
+#upload-button{
     position: relative;
     top: 73vh;
     left: 40vw;

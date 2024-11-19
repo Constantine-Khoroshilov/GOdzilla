@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Godzilla</title>
     <link rel="stylesheet" href="./static/style.css">
+    <script src="static/script.js"></script>
 </head>
 
 <body>
@@ -14,22 +15,20 @@
                 <span>GO</span>dzilla
             </h2>
         </div>
-        <button class="navi-button">Главная</button>
-        <button class="navi-button">Обрезка видео</button>
-        <button class="navi-button">Выделение игровой доски</button>
-        <button class="navi-button">Получение SGF файла</button>
         <div class="empty-cell"></div>
-        <button class="navi-button">Справка</button>
+        <button class="navi-button"><b>Главная</b></button>
+        <button class="navi-button"><b>Обрезка видео</b></button>
+        <button class="navi-button"><b>Выделение игровой доски</b></button>
+        <button class="navi-button"><b>Получение SGF файла</b></button>
+        <div class="empty-cell"></div>
+        <button class="navi-button"><b>Справка</b></button>
     </div>
 
-    <div>
-        <h1 class = "main-msg">Добро пожаловать в сервис Godzilla!</h1>
-        <input type="file" id="videoInput" class="video-input" accept="video/*">
-        <button id="uploadButton">Загрузить видео</button>
+    <div class="main">
+        <h1 class = "main-head">Добро пожаловать в сервис Godzilla!</h1>
+        <input type="file" id="video-input" class="video-input" accept="video/*">
+        <button id="upload-button">Загрузить видео</button>
         <button id="open-man-button">Открыть справку</button>
     </div>
-
-
-    <script src="static/script.js"></script>
 </body>
 </html>

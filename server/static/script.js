@@ -1,5 +1,5 @@
-const uploadButton = document.getElementById('uploadButton');
-const videoInput = document.getElementById('videoInput');
+const uploadButton = document.getElementById('upload-button');
+const videoInput = document.getElementById('video-input');
 
 
 uploadButton.onclick = function(){
