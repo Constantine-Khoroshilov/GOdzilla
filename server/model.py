@@ -87,7 +87,7 @@ class Processing:
         return (
             self._video.status != Video.Status.NOT_UPLOADED and
             self._video.status != Video.Status.UPLOADING and
-            self._video.interval is not None and 
+            self._video.segment is not None and 
             self._video.board_area is not None)
 
     @to_thread
