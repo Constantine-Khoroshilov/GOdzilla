@@ -1,6 +1,14 @@
 const uploadButton = document.getElementById('upload-button');
 const videoInput = document.getElementById('video-input');
 
+manButton = document.getElementById('open-man-button');
+manButton.onclick = openMan;
+
+async function openMan(){
+    let body = document.getElementsByClassName('main')[0];
+    body.innerHTML = await getStaticFileFromServer('man.html');
+}
+
 
 uploadButton.onclick = function(){
     videoInput.click()
@@ -28,6 +36,11 @@ async function uploadVideoToServer(file) {
         alert(error);
     }
 };
+
+async function getStaticFileFromServer(fileName) {
+    let staticFile = await fetch(`/static/${fileName}`, { method: 'GET'}).then(response => response.text());
+    return staticFile;
+}
 
 videoInput.onchange = function() {
     if (videoInput.files.length > 0) {
