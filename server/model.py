@@ -150,6 +150,7 @@ class Video:
         self.path = None
         self.segment = None
         self.board_area = None
+        self.interval = None
         self.processing = Processing(self)
 
     async def remove(self):

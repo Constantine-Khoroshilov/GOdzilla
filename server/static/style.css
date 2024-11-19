@@ -1,23 +1,67 @@
+body{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    margin: 0px;
+}
+
+.main{
+    background-image: url("Godzilla_cut_transparent.png");
+    background-repeat: no-repeat;
+    background-position: top;
+    background-color: lightgrey;
+    height: 100vh;
+}
+
 input{
     display: none;
 }
 
-body{
-    background-image: url("Godzilla_cut_transparent.png");
-    background-repeat: no-repeat;
-    background-position: 50% 0%;
-    background-color:darkgrey;
+.navi{
+    display: grid;
+    grid-template-rows: 10vh 3vh repeat(4, 1fr) 3fr 1fr;
+    row-gap: 10px;
+    background-color: black;
+    height: 100vh;
 }
 
-.main_msg{
-    position: absolute;
-    top: 60vh;
-    left: 35vw;
+.navi > .navi-head-wrapper{
+    background-color: rgb(122, 122, 122);
 }
 
-#uploadButton{
+.navi-head{
+    margin-left: 7vw;
+    color: white;
+}
+
+.navi-head > span{
+    color: black;
+}
+
+button.navi-button{
+    margin: 10px;
+    background-color: rgb(122, 122, 122);
+    border-radius: 15px;
+    color: white;
+}
+
+.main-head{
     position: relative;
-    top: 70vh;
+    top: 65%;
+    left: 28%;
+    /* left: 35vw; */
+}
+
+#upload-button{
+    position: relative;
+    top: 73vh;
     left: 40vw;
+}
+
+#open-man-button{
+    background-color: black;
+    color: white;
+    position: relative;
+    top: 73vh;
+    left: 50vw;
 }
 
