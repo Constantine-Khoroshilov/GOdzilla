@@ -58,7 +58,7 @@ function restoreMainEvents() {
 // Функция для открытия справки
 async function openMan() {
     const mainElement = document.querySelector('.main');
-    mainElement.innerHTML = await getStaticFileFromServer('manl.html');
+    mainElement.innerHTML = await getStaticFileFromServer('man.html');
 }
 
 // Функция для загрузки видео на сервер
