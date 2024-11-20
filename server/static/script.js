@@ -17,7 +17,7 @@ function restoreMainEvents() {
     const manButt = document.getElementById('open-man-butt');
     const loadingGif = document.getElementById('loading-gif');
 
-    // Скрываем гифку по умолчанию
+    // Скрываем гифку по умолчанию ###
     if (loadingGif) {
         loadingGif.style.display = 'none';
     }
