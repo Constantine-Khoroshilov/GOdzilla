@@ -4,37 +4,38 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Godzilla</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./static/style.css">
 </head>
 
 <body>
+    <!-- Бургер меню -->
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-
+    <!-- Панель навигации -->
     <div class="navi">
         <div class="navi-head-wrapper">
             <h2 class="navi-head">
                 <span>GO</span>dzilla
             </h2>
         </div>
-
         <div class="empty-cell"></div>
         <button class="navi-button" onclick="openMain()"><b>Главная</b></button>
-        <button class="navi-button"><b>Обрезка видео</b></button>
+        <button class="navi-button" id="cut-video-button"><b>Обрезка видео</b></button>
         <button class="navi-button"><b>Выделение игровой доски</b></button>
         <button class="navi-button"><b>Получение SGF файла</b></button>
         <div class="empty-cell"></div>
         <button class="navi-button" id="open-man-butt"><b>Справка</b></button>
     </div>
-
+    <!-- Main -->
     <div class="main">
         <img src="static/Godzilla_cut_transparent.png" alt="Godzilla" class="main-image">
-        <h1 class = "main-head">Добро пожаловать в сервис Godzilla!</h1>
+        <h1 class="main-head">Добро пожаловать в сервис Godzilla!</h1>
         <input type="file" id="video-input" class="video-input" accept="video/*">
         <button id="upload-button">Загрузить видео</button>
         <img id="loading-gif" src="static/30.gif" alt="Загрузка...">
         <button id="open-man-button">Открыть справку</button>
     </div>
-    
-<script src="static/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+    <script src="static/script.js"></script>
 </body>
 </html>

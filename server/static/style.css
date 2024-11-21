@@ -1,168 +1,236 @@
-body {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    margin: 0px;
-    min-height: 100vh;
-}
-
-.main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 3fr repeat(3, 1fr);
-    background-repeat: no-repeat;
-    background-position: top;
-    justify-content: center;
-    background-color: lightgrey;
-}
-
-.main img {
-        grid-column: span 2; /* Изображение занимает две колонки */
-        width: 55%; 
-        margin: auto;
-}
-
-input {
-    display: none;
-}
-
-.navi {
-    display: grid;
-    grid-column: 1; 
-    grid-template-rows: max(10vh, 50px) 3vh repeat(4, 1fr) 3fr 1fr;
-    row-gap: 10px;
-    background-color: black;
-}
-
-.navi > .navi-head-wrapper {
-    display: flex;
-    justify-content: center;
-    background-color: rgb(122, 122, 122);
-}
-
-.navi-head {
-    color: white;
-}
-
-.navi-head > span {
-    color: black;
-}
-
-.menu-toggle {
-    display: none; /* Прячем кнопку на больших экранах */
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: black;
-    cursor: pointer;
-    z-index: 101;
-}
-
-button.navi-button {
-    margin: 10px 20px 20px 10px;
-    background-color: rgb(122, 122, 122);
-    border-radius: 15px;
-    color: white;
-}
-
-.main-head {
-        grid-column: span 2; 
-        text-align: center;
-        margin: 20px 0;
-}
-
-#upload-button {
-    height: 80%;
-    width: 50%;
-    position: relative;
-    grid-column: 1;
-    margin: auto;
-}
-
-#open-man-button {
-    background-color: black;
-    color: white;
-    height: 80%;
-    width: 50%;
-    grid-column: 2;
-    position: relative;
-    margin: auto;
-}
-
-#loading-gif {
-    display: none;
-    width: 50px;
-    height: 50px;
-    margin: auto;
-    grid-column: 1 / span 2;
-    justify-self: center;
-    align-self: center;
-}
-
-    /* Адаптация для мобильных устройств */
-    @media (max-width: 768px) {
-        body{
-    display: grid;
-    grid-template-columns: 1fr;
-    margin: 0px;
-    }
-        .main {
+/* ГЛАВНАЯ */
+    /* Заменяемая часть контента */
+    .main {
         display: grid;
-        grid-template-columns: 207px 207px;
-        align-items: center;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 3fr repeat(2, 0.5fr);
+        background-repeat: no-repeat;
+        background-position: top;
         justify-content: center;
-        height: 100vh; 
-        padding: 0;
-        margin: 0;
+        background-color: lightgrey;
     }
-
-    .main-head {
-        grid-column: span 2; 
-        text-align: center;
-        font-size: xx-large;
-        margin: 20px 0;
-    }
-
+    /* Годзиллы */
     .main img {
-        width: 70%; 
-        object-fit: cover; 
-        grid-column: span 2; /* Изображение занимает две колонки */
+            grid-column: span 2;
+            width: 55%; 
+            margin: auto;
+    }
+    /* Меню навигации */
+    .navi {
+        display: grid;
+        grid-column: 1; 
+        grid-template-rows: max(10vh, 50px) 3vh repeat(4, 1fr) 3fr 1fr;
+        row-gap: 10px;
+        background-color: black;
+    }
+    /* Область надписи "Годзилла" */
+    .navi > .navi-head-wrapper {
+        display: flex;
+        justify-content: center;
+        background-color: rgb(122, 122, 122);
     }
     
-
+    /* Сама надпись Годзилла */
+    .navi-head {
+        color: white;
+    }
+    .navi-head > span {
+        color: black;
+    }
+    
+    /* Бургер меню, которое видно на маленьком экране */
     .menu-toggle {
-        display: block; /* Показываем кнопку меню */
-    }
-
-    .navi {
+        display: none;
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 250px;
-        height: 100%;
-        transform: translateX(-100%); /* Прячем меню за пределы экрана */
+        top: 10px;
+        left: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: black;
+        cursor: pointer;
+        z-index: 101;
     }
 
-    .navi.show {
-        z-index: 5;
-        transform: translateX(0); /* Выдвигаем меню */
+    /* Кнопки навигации */
+    button.navi-button {
+        margin: 10px 20px 20px 10px;
+        background-color: rgb(122, 122, 122);
+        border-radius: 15px;
+        color: white;
+    }
+    
+    /* Надпись "Добро пожаловать */
+    .main-head {
+            grid-column: span 2; 
+            text-align: center;
+            margin: 20px 0;
     }
 
-    #upload-button{
-    position: relative;
-    margin: 0px 19px 30px 20px;
-    height: 60%;
-    width: 70%;
+    /* Кнопка загрузки видео на главном экране*/
+    #upload-button {
+        height: 80%;
+        width: 50%;
+        position: relative;
+        grid-column: 1;
+        margin: auto;
     }
 
-    #open-man-button{
+    /* Для кнопки загрузки видео */
+    input {
+        display: none;
+    }
+    
+    /* Кнопка открытия справки на главном экране */
+    #open-man-button {
         background-color: black;
         color: white;
+        height: 80%;
+        width: 50%;
+        grid-column: 2;
+        position: relative;
+        margin: auto;
+    }
+
+    /* Гифка загрузки */
+    #loading-gif {
+        display: none;
+        width: 50px;
+        height: 50px;
+        margin: auto;
+        grid-column: 1 / span 2;
+        justify-self: center;
+        align-self: center;
+    }
+    
+        /* Адаптация для мобильных устройств */
+        @media (max-width: 768px)
+    {
+            body{
+        display: grid;
+        grid-template-columns: 1fr;
+        margin: 0px;
+        }
+            .main {
+            display: grid;
+            grid-template-columns: 207px 207px;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; 
+            padding: 0;
+            margin: 0;
+        }
+    
+        .main-head {
+            grid-column: span 2; 
+            text-align: center;
+            font-size: xx-large;
+            margin: 20px 0;
+        }
+    
+        .main img {
+            width: 70%; 
+            object-fit: cover; 
+            grid-column: span 2; 
+        }
+        
+        .menu-toggle {
+            display: block;
+        }
+    
+        .navi {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            transform: translateX(-100%);
+        }
+    
+        .navi.show {
+            z-index: 5;
+            transform: translateX(0);
+        }
+    
+        #upload-button{
+        position: relative;
+        margin: 0px 19px 30px 20px;
         height: 60%;
         width: 70%;
-        margin: 0px 19px 30px 20px;
-        position: relative;
+        }
+    
+        #open-man-button{
+            background-color: black;
+            color: white;
+            height: 60%;
+            width: 70%;
+            margin: 0px 19px 30px 20px;
+            position: relative;
+        }
     }
+
+/* ОБРЕЗКА ВИДЕО */
+
+    /* Контейнер видео */
+    .video-player-container {
+        height: 60vh;
+        grid-column: span 2;
+        margin: auto;
     }
+    /* Само видео в контейнере */
+    .video-player {
+        height: 100%;
+        border: 2px solid black;
+        border-radius: 8px;
+    }
+    /* "На главную" */
+    .return-button {
+        height: 80%;
+    width: 50%;
+    position: relative;
+    grid-column: 2;
+    margin: auto;
+    }
+    /* Перейти на "Выделение игровой доски" после обрезки */
+    .ret-button {
+        background-color: black;
+    color: white;
+    height: 80%;
+    width: 50%;
+    grid-column: 1;
+    position: relative;
+    margin: auto;
+    }
+    /* Контейнер со слайдером */
+    .slider-container {
+        grid-column: span 2;
+        margin: auto;
+        width: 70%;
+    }
+    /* Сам слайдер */
+    #video-slider {
+        width: 80%;
+        margin: 0% 5% 2% 10%;
+    }
+
+            /* Отображение времени начала и конца на "Обрезка видео" */
+    .time-display {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 5%;
+        font-size: 14px;
+        color: black;
+    }
+    /* Текст на "Обрезка видео" */
+    .time-display span {
+        font-weight: bold;
+    }
+
+    /* Основное тело (с меню выбора) */
+    body {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        margin: 0px;
+        min-height: 100vh;
+    }
+    
