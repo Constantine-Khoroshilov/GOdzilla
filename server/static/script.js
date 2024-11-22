@@ -141,10 +141,10 @@
             endTimeElement.textContent = formatTime(videoEnd);
 
             // Синхронизируем видео с ползунком
-            if (videoElement.currentTime < videoStart) {
+            if (videoElement.currentTime != videoStart) {
                 videoElement.currentTime = videoStart;
             } 
-            else if (videoElement.currentTime >= videoEnd) {
+            else if (videoElement.currentTime != videoEnd) {
                 videoElement.pause();
                 videoElement.currentTime = videoStart;
             }
@@ -211,6 +211,14 @@
     function trimVideo(startTime, endTime) {
         alert(`Обрезаем видео от ${startTime} до ${endTime} !`);
         // Добавить логику обрезки видео - !!!
+    }
+
+     // Функция для управления меню
+     function toggleMenu() {
+        const body = document.body;
+        const navi = document.querySelector('.navi');
+        navi.classList.toggle('show');
+        body.classList.toggle('menu-open');
     }
 
     // Восстановление событий при загрузке страницы - ЧТОБЫ ВСЕ КНОПКИ РАБОТАЛИ ПРИ ЗАПУСКЕ
