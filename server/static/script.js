@@ -1,6 +1,19 @@
     var uploadedVideoUrl = null; // Глобальная переменная для хранения URL загруженного видео
     var videoElement; // Переменная для элемента <video>
 
+    var processing_data = {
+        "segment": {
+            "start": 0,
+            "stop": 0
+        },
+        "board_area": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 0,
+            "y2": 0
+        }
+    }
+
     // Сохраняем оригинальный контент главной страницы
     const originalMainContent = document.querySelector('.main').innerHTML;
 
@@ -113,7 +126,7 @@
                 min: 0,
                 max: duration,
             },
-            step: 0.5,
+            step: 1,
             format: {
                 to: value => Math.round(value), // Округляем значения ползунков
                 from: value => Number(value),
@@ -121,24 +134,7 @@
         });
 
         // Слушатель события обновления ползунков
-        slider.noUiSlider.on('update', function (values) {
-            const [startValue, endValue] = values.map(Number);
-            videoStart = startValue;
-            videoEnd = endValue;
-
-            // Обновляем отображение времени
-            startTimeElement.textContent = formatTime(videoStart);
-            endTimeElement.textContent = formatTime(videoEnd);
-
-            // Синхронизируем видео с ползунком
-            if (videoElement.currentTime != videoStart) {
-                videoElement.currentTime = videoStart;
-            } 
-            else if (videoElement.currentTime != videoEnd) {
-                videoElement.pause();
-                videoElement.currentTime = videoStart;
-            }
-        });
+        slider.noUiSlider.on('update', (values) => vidmanager(values));
         
         // Нажатие кнопки "Обрезать видео"
         document.getElementById('trim-video-button').onclick = () => {
@@ -152,6 +148,22 @@
                 videoElement.currentTime = videoStart;
             }
         });
+    }
+
+    function vidmanager(startEndValues){
+        const startTimeElement = document.getElementById('start-time');
+        const endTimeElement = document.getElementById('end-time');
+
+        const [startValue, endValue] = startEndValues.map(Number);
+        videoStart = startValue;
+        videoEnd = endValue;
+
+         // Обновляем отображение времени
+         startTimeElement.textContent = formatTime(videoStart);
+         endTimeElement.textContent = formatTime(videoEnd);
+
+         // Синхронизируем видео с ползунком
+         videoElement.currentTime = videoStart;
     }
 
     // Форматирование времени в формате MM:SS - для вывода на экран пользователя
@@ -200,7 +212,8 @@
     // !!! - ПОКА ПРОСТО ЗАПИСЫВАЕТ И ОТОБРАЖАЕТ ВРЕМЯ
     function trimVideo(startTime, endTime) {
         alert(`Обрезаем видео от ${startTime} до ${endTime} !`);
-        // Добавить логику обрезки видео - !!!
+        processing_data.segment.start = startTime;
+        processing_data.segment.stop = endTime;
     }
 
      // Функция для управления меню
