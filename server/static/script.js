@@ -82,11 +82,11 @@
             mainElement.innerHTML = await getStaticFileFromServer('video_cut.html');
 
             // Подстановка атрибута в тег
-            srcPtr = getElementByTagName('source');
+            srcPtr = mainElement.getElementsByTagName('source')[0];
             srcPtr.setAttribute('src', uploadedVideoUrl);
 
             // Навешивание обработчика на нажатие кнопки
-            btnPtr = getElementsByClassName('ret-button');
+            btnPtr = mainElement.getElementsByClassName('ret-button')[0];
             btnPtr.onclick = openMain;
 
             // Устанавливаем событие на ползунок и видео
@@ -113,7 +113,7 @@
                 min: 0,
                 max: duration,
             },
-            step: 1,
+            step: 0.5,
             format: {
                 to: value => Math.round(value), // Округляем значения ползунков
                 from: value => Number(value),
