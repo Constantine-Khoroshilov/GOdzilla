@@ -74,30 +74,20 @@
     }
 
     // Функция для открытия страницы обрезки видео
-    function openCutVideoPage() {
+    async function openCutVideoPage() {
         const mainElement = document.querySelector('.main');
 
         if (uploadedVideoUrl) {
-            // Подставляем видео и интерфейс обрезки
-            // !!! - НЕ ЗНАЮ КАК ВЫНЕСТИ В ОТДЕЛЬНЫЙ .HTML, Т.К НАДО ПЕРЕДАВАТЬ uploadedVideoUrl
-            mainElement.innerHTML = 
-            `
-                <div class="video-player-container">
-                    <video controls class="video-player" id="video-player">
-                        <source src="${uploadedVideoUrl}" type="video/mp4">
-                        Ваш браузер не поддерживает видео.
-                    </video>
-                </div>
-                <div class="slider-container">
-                    <div id="video-slider"></div>
-                    <div class="time-display">
-                        <span>Начало: <span id="start-time">0:00</span></span>
-                        <span>Конец: <span id="end-time">0:00</span></span>
-                    </div>
-                </div>
-                <button class="ret-button" onclick="openMain()">Вернуться на главную</button>
-                <button id="trim-video-button" class="return-button">Обрезать видео</button>
-            `;
+            // Получение статического файла с интерфейсом обрезки видео
+            mainElement.innerHTML = await getStaticFileFromServer('video_cut.html');
+
+            // Подстановка атрибута в тег
+            srcPtr = getElementByTagName('source');
+            srcPtr.setAttribute('src', uploadedVideoUrl);
+
+            // Навешивание обработчика на нажатие кнопки
+            btnPtr = getElementsByClassName('ret-button');
+            btnPtr.onclick = openMain;
 
             // Устанавливаем событие на ползунок и видео
             videoElement = document.getElementById('video-player');
