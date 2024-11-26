@@ -1,5 +1,5 @@
-    let uploadedVideoUrl = null; // Глобальная переменная для хранения URL загруженного видео
-    let videoElement; // Переменная для элемента <video>
+    var uploadedVideoUrl = null; // Глобальная переменная для хранения URL загруженного видео
+    var videoElement; // Переменная для элемента <video>
 
     // Сохраняем оригинальный контент главной страницы
     const originalMainContent = document.querySelector('.main').innerHTML;
