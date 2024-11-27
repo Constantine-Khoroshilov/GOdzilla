@@ -2,24 +2,23 @@
 *
 
 # Исключаем ниже указанные папки из игнорирования
-!server/
-!server/static/
+!static/
 !hands_recognition/
 
 # В ниже указанных папках не игнорируем указанные форматы
-!server/*.html
-!server/static/**/*.html
-!server/static/**/*.js
-!server/static/**/*.css
-!server/static/**/*.webp
-!server/static/**/*.png
-!server/static/**/*.jpeg
-!server/static/**/*.jpg
-!server/static/**/*.svg
-!server/static/**/*.gif
-!server/static/**/*.fig
-!server/static/**/*.ico
-!server/static/**/*.webmanifest
+!*.html
+!static/**/*.html
+!static/**/*.js
+!static/**/*.css
+!static/**/*.webp
+!static/**/*.png
+!static/**/*.jpeg
+!static/**/*.jpg
+!static/**/*.svg
+!static/**/*.gif
+!static/**/*.fig
+!static/**/*.ico
+!static/**/*.webmanifest
 !hands_recognition/*.pt
 
 # Следим только за .py, .md и .txt файлами в корне и подкаталогах
