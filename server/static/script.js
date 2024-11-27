@@ -153,7 +153,6 @@
 
         // Слушатель события обновления ползунков
         slider.noUiSlider.on('update', (values) => vidmanager(values));
-        
     }
 
     function vidmanager(startEndValues){
