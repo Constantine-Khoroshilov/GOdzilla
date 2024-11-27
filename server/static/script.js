@@ -1,6 +1,10 @@
     var uploadedVideoUrl = null; // Глобальная переменная для хранения URL загруженного видео
     var videoElement; // Переменная для элемента <video>
 
+    var videoStart;
+    var videoStop;
+    var videoEnd;
+
     var processing_data = {
         "segment": {
             "start": 0,
@@ -114,13 +118,14 @@
 
     // Функция для инициализации ползунка
     function initializeSlider(duration) {
-        const slider = document.getElementById('video-slider');
-        const startTimeElement = document.getElementById('start-time');
-        const endTimeElement = document.getElementById('end-time');
+        videoStart = 0;
+        videoStop = duration;
+        videoEnd = duration;
 
+        slider = document.getElementById('video-slider');
         // Создаем ползунок с помощью библиотеки noUiSlider
         noUiSlider.create(slider, {
-            start: [0, Math.min(10, duration)], // Начальные позиции ползунков
+            start: [0, duration], // Начальные позиции ползунков
             connect: true,
             range: {
                 min: 0,
@@ -138,7 +143,7 @@
         
         // Нажатие кнопки "Обрезать видео"
         document.getElementById('trim-video-button').onclick = () => {
-            trimVideo(videoStart, videoEnd);
+            trimVideo(videoStart, videoStop);
             };
 
         // Обработчик события окончания интервала воспроизведения
@@ -155,15 +160,23 @@
         const endTimeElement = document.getElementById('end-time');
 
         const [startValue, endValue] = startEndValues.map(Number);
-        videoStart = startValue;
-        videoEnd = endValue;
 
-         // Обновляем отображение времени
-         startTimeElement.textContent = formatTime(videoStart);
-         endTimeElement.textContent = formatTime(videoEnd);
+        let videoCur;
+        if (videoStart - startValue != 0){
+            videoStart = startValue;
+            videoCur = videoStart;
+        }
+        else if (videoStop - endValue != 0){
+            videoStop = endValue;
+            videoCur = videoStop;
+        }
 
-         // Синхронизируем видео с ползунком
-         videoElement.currentTime = videoStart;
+        // Обновляем отображение времени
+        startTimeElement.textContent = formatTime(videoStart);
+        endTimeElement.textContent = formatTime(videoStop);
+
+        if (videoCur != undefined)
+            videoElement.currentTime = videoCur;
     }
 
     // Форматирование времени в формате MM:SS - для вывода на экран пользователя
