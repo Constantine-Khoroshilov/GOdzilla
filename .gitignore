@@ -19,7 +19,7 @@
 !static/**/*.fig
 !static/**/*.ico
 !static/**/*.webmanifest
-!models_parameters/*.pt
+!models_parameters/**/*.pt
 
 # Следим только за .py, .md и .txt файлами в корне и подкаталогах
 !*.py
