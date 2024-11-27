@@ -109,6 +109,19 @@
             // Устанавливаем событие на ползунок и видео
             videoElement = document.getElementById('video-player');
             videoElement.onloadedmetadata = () => initializeSlider(videoElement.duration);
+
+            // Нажатие кнопки "Обрезать видео"
+            document.getElementById('trim-video-button').onclick = () => {
+                setStartStopForVideo(videoStart, videoStop);
+            };
+
+            // Обработчик события окончания интервала воспроизведения
+            videoElement.addEventListener('timeupdate', () => {
+                if (videoElement.currentTime >= videoEnd) {
+                    videoElement.pause();
+                    videoElement.currentTime = videoStart;
+                }
+            });
         } 
         else {
             // Предупреждение, если видео не загружено
@@ -141,18 +154,6 @@
         // Слушатель события обновления ползунков
         slider.noUiSlider.on('update', (values) => vidmanager(values));
         
-        // Нажатие кнопки "Обрезать видео"
-        document.getElementById('trim-video-button').onclick = () => {
-            setStartStopForVideo(videoStart, videoStop);
-            };
-
-        // Обработчик события окончания интервала воспроизведения
-        videoElement.addEventListener('timeupdate', () => {
-            if (videoElement.currentTime >= videoEnd) {
-                videoElement.pause();
-                videoElement.currentTime = videoStart;
-            }
-        });
     }
 
     function vidmanager(startEndValues){
@@ -222,7 +223,6 @@
     }
 
     // Обработка обрезки видео
-    // !!! - ПОКА ПРОСТО ЗАПИСЫВАЕТ И ОТОБРАЖАЕТ ВРЕМЯ
     function setStartStopForVideo(startTime, endTime) {
         alert(`Обрезаем видео от ${formatTime(startTime)} до ${formatTime(endTime)} !`);
         processing_data.segment.start = startTime;
