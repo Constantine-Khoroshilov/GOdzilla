@@ -3,7 +3,7 @@
 
 # Исключаем ниже указанные папки из игнорирования
 !static/
-!hands_recognition/
+!models_parameters/
 
 # В ниже указанных папках не игнорируем указанные форматы
 !*.html
@@ -19,7 +19,7 @@
 !static/**/*.fig
 !static/**/*.ico
 !static/**/*.webmanifest
-!hands_recognition/*.pt
+!models_parameters/*.pt
 
 # Следим только за .py, .md и .txt файлами в корне и подкаталогах
 !*.py
