@@ -8,6 +8,7 @@
 
 # В ниже указанных папках не игнорируем указанные форматы
 !server/*.html
+!server/static/**/*.html
 !server/static/**/*.js
 !server/static/**/*.css
 !server/static/**/*.webp
@@ -17,6 +18,8 @@
 !server/static/**/*.svg
 !server/static/**/*.gif
 !server/static/**/*.fig
+!server/static/**/*.ico
+!server/static/**/*.webmanifest
 !hands_recognition/*.pt
 
 # Следим только за .py, .md и .txt файлами в корне и подкаталогах
