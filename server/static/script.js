@@ -125,7 +125,7 @@
         slider = document.getElementById('video-slider');
         // Создаем ползунок с помощью библиотеки noUiSlider
         noUiSlider.create(slider, {
-            start: [0, duration], // Начальные позиции ползунков
+            start: [videoStart, videoEnd], // Начальные позиции ползунков
             connect: true,
             range: {
                 min: 0,
@@ -143,7 +143,7 @@
         
         // Нажатие кнопки "Обрезать видео"
         document.getElementById('trim-video-button').onclick = () => {
-            trimVideo(videoStart, videoStop);
+            setStartStopForVideo(videoStart, videoStop);
             };
 
         // Обработчик события окончания интервала воспроизведения
@@ -223,8 +223,8 @@
 
     // Обработка обрезки видео
     // !!! - ПОКА ПРОСТО ЗАПИСЫВАЕТ И ОТОБРАЖАЕТ ВРЕМЯ
-    function trimVideo(startTime, endTime) {
-        alert(`Обрезаем видео от ${startTime} до ${endTime} !`);
+    function setStartStopForVideo(startTime, endTime) {
+        alert(`Обрезаем видео от ${formatTime(startTime)} до ${formatTime(endTime)} !`);
         processing_data.segment.start = startTime;
         processing_data.segment.stop = endTime;
     }
