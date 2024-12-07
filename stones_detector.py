@@ -4,7 +4,7 @@ import cv2
 import os
 
 
-class StonesDetection:
+class StonesDetector:
     ''' Класс содержит методы, которые позволяют по
         изображению игровой доски ГО получить матрицу
         расположения камней.
