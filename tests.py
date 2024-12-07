@@ -3,11 +3,11 @@ import numpy as np
 from stones_detection import StonesDetection
 
 size = 19
-image = cv2.imread("test\\img\\Image10.jpg")
+image = cv2.imread('test\\img\\Image17.jpg')
 h, w = image.shape[:2]
 
 stones_detection = StonesDetection(0, 0, w, h, size)
-stones_detection.is_show_processed_img = True
+stones_detection.debug = True
 
 matrix1 = stones_detection.get_stones_matrix(image)
     
