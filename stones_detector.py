@@ -37,20 +37,34 @@ class StonesDetector:
         self._black_cascade = cv2.CascadeClassifier(os.path.join('models_parameters', 'stones_detector', 'black-cascade-grayscale.xml'))
         self._white_cascade = cv2.CascadeClassifier(os.path.join('models_parameters', 'stones_detector', 'white-cascade-grayscale.xml'))
         
+        self.decreasor = 0.2
+        self.color_detection = False
         self.debug = False
 
 
     def _process_image(self, src: np.ndarray) -> np.ndarray:
-        gray_img = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+        blurred_image = cv2.GaussianBlur(src, (51, 51), 0)
+        gray_img = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2GRAY)
+
         # среднее значение
-        mean_brightness = np.mean(gray_img)
+        # mean_brightness = np.mean(gray_img)
+        median_brightness = np.median(gray_img)
+
         # стандартное отклонение — мера разброса значений относительно среднего
-        std_brightness = np.std(gray_img) 
+        # std_brightness = np.std(gray_img)
+
+        # Вычисление отклонений от медианы
+        # deviations = gray_img - median_brightness
+        # Вычисление стандартного отклонения от медианы
+        # std_brightness = np.sqrt(np.mean(deviations**2))
+        
+        # медианное абсолютное отклонение
+        std_brightness = np.median(np.abs(gray_img - median_brightness))
 
         # пороговые значения для выделения черных и белых камней
         tolerance = 0
-        black_thresh = mean_brightness - (std_brightness * (1 + tolerance))
-        white_thresh = mean_brightness + (std_brightness * (1 + tolerance))
+        black_thresh = median_brightness - (std_brightness * (1 + tolerance))
+        white_thresh = median_brightness + (std_brightness * (1 + tolerance))
             
         # итоговый цвет пикселей, текущий цвет к-ых превосходит порог
         maxval = 255
@@ -76,11 +90,9 @@ class StonesDetector:
 
 
     def _detect(self, src: np.ndarray, cascade):
-        gray_img = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
         min_size = (self._width // self._size, self._length // self._size)
-
         rects = cascade.detectMultiScale(
-            gray_img, scaleFactor=1.1, minNeighbors=3, minSize=min_size, flags=cv2.CASCADE_SCALE_IMAGE)
+            src, scaleFactor=1.1, minNeighbors=3, minSize=min_size, flags=cv2.CASCADE_SCALE_IMAGE)
 
         return rects
 
@@ -92,20 +104,34 @@ class StonesDetector:
         return False
 
 
+    def _decrease_rect(self, rect):
+        return np.array([
+            rect[0] + self.decreasor * self._step_x,
+            rect[1] + self.decreasor * self._step_y,
+            rect[2] - 2 * self.decreasor * self._step_x,
+            rect[3] - 2 * self.decreasor * self._step_y
+        ], dtype=int)
+
+
     def get_stones_matrix(self, src: np.ndarray) -> np.ndarray:
         ''' Метод принимает на вход:
                 src - открытое исходное изображение игровой доски ГО,                
             и возвращает матрицу расположения 
             камней на изображении.
         '''
-        blurred_image = cv2.GaussianBlur(src, (51, 51), 0)
-        precessed_image = self._process_image(blurred_image)
+        if self.color_detection:            
+            precessed_image = self._process_image(src)
+        else:
+            precessed_image = src.copy()
+        
+        gray_img = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+        black_stones = self._detect(gray_img, self._black_cascade)
+        white_stones = self._detect(gray_img, self._white_cascade)
 
-        black_stones = self._detect(src, self._black_cascade)
-        white_stones = self._detect(src, self._white_cascade)
-
-        if self.debug:
-            self._view_image(precessed_image)
+        if len(black_stones) != 0:
+            black_stones = np.apply_along_axis(self._decrease_rect, axis=1, arr=black_stones)
+        if len(white_stones) != 0:
+            white_stones = np.apply_along_axis(self._decrease_rect, axis=1, arr=white_stones) 
 
         matrix = np.zeros((self._size, self._size), dtype=int)
 
@@ -115,15 +141,16 @@ class StonesDetector:
                 x = self._start[0] + int(i * self._step_x) 
                 y = self._start[1] + int(j * self._step_y)
 
-                # координаты прямоугольной области
-                y1 = y - self._ry if (y - self._ry) > self._start[0] else y
-                y2 = y + self._ry if (y + self._ry) < self._end[0] else y
-                x1 = x - self._rx if (x - self._rx) > self._start[1] else x
-                x2 = x + self._rx if (x + self._rx) < self._end[1] else x
+                if self.color_detection:
+                    # координаты прямоугольной области
+                    y1 = y - self._ry if (y - self._ry) > self._start[0] else y
+                    y2 = y + self._ry if (y + self._ry) < self._end[0] else y
+                    x1 = x - self._rx if (x - self._rx) > self._start[1] else x
+                    x2 = x + self._rx if (x + self._rx) < self._end[1] else x
                 
-                colors = precessed_image[y1:y2,x1:x2]
-                # средний цвет прямоугольной области
-                color = cv2.mean(colors)[:3]
+                    colors = precessed_image[y1:y2,x1:x2]
+                    # средний цвет прямоугольной области
+                    color = cv2.mean(colors)[:3]
 
                 if self._is_point_inside(black_stones, x, y):
                     matrix[j][i] = 1
@@ -131,16 +158,17 @@ class StonesDetector:
                 elif self._is_point_inside(white_stones, x, y):
                     matrix[j][i] = 2
                 
-                elif all(component < 100 for component in color):
+                elif self.color_detection and all(component < 100 for component in color):
                     matrix[j][i] = 1
 
-                elif all(component > 200 for component in color):
+                elif self.color_detection and all(component > 200 for component in color):
                     matrix[j][i] = 2
                     
-                if self.debug: 
+                if self.debug:
                     yellow = (0, 255, 255)
                     cv2.rectangle(precessed_image, (x,y), (x,y), yellow, 5)
-                    cv2.rectangle(precessed_image, (x1, y1), (x2, y2), yellow, 2)
+                    if self.color_detection:
+                        cv2.rectangle(precessed_image, (x1, y1), (x2, y2), yellow, 2)
 
                     for x, y, b, h in black_stones:
                         cv2.rectangle(precessed_image, (x, y), (x+b, y+h), yellow, 4)
