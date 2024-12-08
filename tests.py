@@ -1,13 +1,14 @@
 import cv2
 import numpy as np
-from stones_detection import StonesDetection
+from stones_detector import StonesDetector
 
 size = 19
-image = cv2.imread('test\\img\\Image18.jpg')
+image = cv2.imread('imgs\\test1.png')
 h, w = image.shape[:2]
 
-stones_detection = StonesDetection(0, 0, w, h, size)
+stones_detection = StonesDetector(0, 0, h, w, size)
 stones_detection.debug = True
+stones_detection.color_detection = False
 
 matrix1 = stones_detection.get_stones_matrix(image)
 for i in range(size):
