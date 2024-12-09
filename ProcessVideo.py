@@ -6,19 +6,19 @@ from сreate_sgf import create_sgf
 
 def process_video(video, processing, sgf_path):
     input_video_path = video.path
-    start_time = video.segment[0]
-    end_time =  video.segment[1]
+    start_time = video.segment.start
+    end_time =  video.segment.stop
     whose_move = {
         1:"b",
         2:"w"
     }
     cap = cv2.VideoCapture(input_video_path)
-    x1,y1,x2,y2 = video.board_area
+    x1,y1,x2,y2 = video.BoardArea.x1,video.BoardArea.y1,video.BoardArea.x2,video.BoardArea.y3
     bild_matrix = StonesDetector(x1,y1,x2,y2)
     matrix =  np.zeros((19, 19), dtype=int)
     move_list =[]
     if not cap.isOpened():
-        print("Ошибка: не удалось открыть видео.")
+        raise Exception('не удалось открыть видео')
     else:
         fps = int(cap.get(cv2.CAP_PROP_FPS))
         # Вычисляем общее количество кадров для обрезки
@@ -27,9 +27,9 @@ def process_video(video, processing, sgf_path):
 
         current_frame =0
         while True:
+            processing.break_processing(cap.release)
             ret, frame = cap.read()
             if not ret:
-                print("Ошибка: завершение видео или ошибка чтения!")
                 break
 
             if start_frame <= current_frame < end_frame:
@@ -46,5 +46,4 @@ def process_video(video, processing, sgf_path):
             if current_frame > end_frame:  # Нажмите 'Esc' для выхода
                 break
         cap.release()
-        cv2.destroyAllWindows()
     create_sgf(sgf_path,move_list)
