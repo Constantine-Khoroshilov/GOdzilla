@@ -13,7 +13,7 @@ def process_video(video, processing, sgf_path):
         2:"w"
     }
     cap = cv2.VideoCapture(input_video_path)
-    x1,y1,x2,y2 = video.BoardArea.x1,video.BoardArea.y1,video.BoardArea.x2,video.BoardArea.y3
+    x1,y1,x2,y2 = video.BoardArea.x1,video.BoardArea.y1,video.BoardArea.x2,video.BoardArea.y2
     bild_matrix = StonesDetector(x1,y1,x2,y2)
     matrix =  np.zeros((19, 19), dtype=int)
     move_list =[]
