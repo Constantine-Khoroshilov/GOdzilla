@@ -1,3 +1,4 @@
+from ProcessVideo import process_video
 from pydantic import BaseModel
 from typing import List
 from enum import Enum
@@ -93,17 +94,10 @@ class Processing:
     @to_thread
     def _start_processing(self):
         video_name, _ = os.path.splitext(os.path.basename(self._video.path))
-        self.sgf_path = os.path.join(sgfs_folder, f'{video_name}.txt')
+        self.sgf_path = os.path.join(sgfs_folder, f'{video_name}.sgf')
         try:
             # функция обработки видеозаписи 
-            import time
-
-            for _ in range(5):
-                self.break_processing()
-                time.sleep(5)
-
-            with open(self.sgf_path, 'w') as f:
-                f.write('Hello George!')
+            process_video(self._video, self, self.sgf_path)
             # конец функции обработки
 
             self._video.status = Video.Status.PROCESSED
