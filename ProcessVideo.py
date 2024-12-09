@@ -4,6 +4,7 @@ from stones_detector import StonesDetector
 from hands_detector import detect_hands
 from сreate_sgf import create_sgf
 
+
 def process_video(video, processing, sgf_path):
     input_video_path = video.path
     start_time = video.segment.start
@@ -13,7 +14,7 @@ def process_video(video, processing, sgf_path):
         2:"w"
     }
     cap = cv2.VideoCapture(input_video_path)
-    x1,y1,x2,y2 = video.BoardArea.x1,video.BoardArea.y1,video.BoardArea.x2,video.BoardArea.y3
+    x1,y1,x2,y2 = video.board_area.x1,video.board_area.y1,video.board_area.x2,video.board_area.y2
     bild_matrix = StonesDetector(x1,y1,x2,y2)
     matrix =  np.zeros((19, 19), dtype=int)
     move_list =[]
