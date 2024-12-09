@@ -12,14 +12,11 @@ def select_roi(frame):
     return bbox  # Возвращаем координаты (x, y, w, h)
 
 
-input_video_path = "../../Pricessing_video/GoGame.mp4"
+input_video_path = "../../Pricessing_video/debug.mp4"
 output_video_path = "../../Pricessing_video/testVideo4.mp4"
 start_time = 55
 end_time =  1000  #5151
 # Координаты обрезки (x1, y1) - верхний левый угол, (x2, y2) - нижний правый угол
-x1, y1, x2, y2 = 165, 12, 478, 350   # Пример координат обрезки
-bild_matrix = StonesDetector(x1, y1, x2, y2 )
-bild_matrix.debug = True
 
 cap = cv2.VideoCapture(input_video_path)
 width = int(cap.get(3)) # cv2.CAP_PROP_FRAME_WIDTH
@@ -40,6 +37,9 @@ else:
         if not ret:
             print("Ошибка: завершение видео или ошибка чтения!")
             break
+        if current_frame == 0:
+            x1,y1,x2,y2 = select_roi(frame)
+            bild_matrix = StonesDetector(x1, y1, x2, y2)
         cropped_frame = frame[y1:y2, x1:x2]
         cv2.imshow("tt",cropped_frame)
         if start_frame <= current_frame < end_frame:
