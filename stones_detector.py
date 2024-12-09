@@ -1,4 +1,3 @@
-from dbm import whichdb
 import numpy as np
 import cv2
 import os
@@ -22,95 +21,63 @@ class StonesDetector:
             size - размерность матрицы (доски),
         '''
         self._size = size
-        self._start = (y1, x1)
-        self._end = (y2, x2)
-        # длина и ширина игровой доски
-        self._length = y2 - y1
-        self._width = x2 - x1
-        # шаг, с которым вычисляются координаты основных точек, на которых стоят камни
-        self._step_y = (self._length - 1) / (self._size - 1)
-        self._step_x = (self._width - 1) / (self._size - 1)
-        # размеры половин сторон прямоугольной области, центром которой является основная точка
-        self._ry = int(0.05 * self._step_y)
-        self._rx = int(0.05 * self._step_x)
+        self._lt_x = x1
+        self._lt_y = y1
+        self._rb_x = x2
+        self._rb_y = y2
 
-        self._black_cascade = cv2.CascadeClassifier(os.path.join('models_parameters', 'stones_detector', 'black-cascade-grayscale.xml'))
-        self._white_cascade = cv2.CascadeClassifier(os.path.join('models_parameters', 'stones_detector', 'white-cascade-grayscale.xml'))
+        self._height = y2 - y1
+        self._width = x2 - x1
         
-        self.decreasor = 0.2
-        self.color_detection = False
+        cascades_folder = os.path.join('models_parameters', 'stones_detector')
+        self._black_cascade = cv2.CascadeClassifier(os.path.join(cascades_folder, 'black-cascade-grayscale.xml'))
+        self._white_cascade = cv2.CascadeClassifier(os.path.join(cascades_folder, 'white-cascade-grayscale.xml'))
+        
         self.debug = False
 
 
-    def _process_image(self, src: np.ndarray) -> np.ndarray:
-        blurred_image = cv2.GaussianBlur(src, (51, 51), 0)
-        gray_img = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2GRAY)
-
-        # среднее значение
-        # mean_brightness = np.mean(gray_img)
-        median_brightness = np.median(gray_img)
-
-        # стандартное отклонение — мера разброса значений относительно среднего
-        # std_brightness = np.std(gray_img)
-
-        # Вычисление отклонений от медианы
-        # deviations = gray_img - median_brightness
-        # Вычисление стандартного отклонения от медианы
-        # std_brightness = np.sqrt(np.mean(deviations**2))
-        
-        # медианное абсолютное отклонение
-        std_brightness = np.median(np.abs(gray_img - median_brightness))
-
-        # пороговые значения для выделения черных и белых камней
-        tolerance = 0
-        black_thresh = median_brightness - (std_brightness * (1 + tolerance))
-        white_thresh = median_brightness + (std_brightness * (1 + tolerance))
-            
-        # итоговый цвет пикселей, текущий цвет к-ых превосходит порог
-        maxval = 255
-
-        _, black_stones_bin = cv2.threshold(gray_img, black_thresh, maxval, cv2.THRESH_BINARY)
-        _, white_stones_bin = cv2.threshold(gray_img, white_thresh, maxval, cv2.THRESH_BINARY)
-
-        black_stones_img = cv2.cvtColor(black_stones_bin, cv2.COLOR_GRAY2BGR)
-        white_stones_img = cv2.cvtColor(white_stones_bin, cv2.COLOR_GRAY2BGR)
-
-        black = np.array([0, 0, 0], dtype=int)
-        white = np.array([255, 255, 255], dtype=int)
-        blue = np.array([255, 0, 0], dtype=int)
-
-        black_stones = np.all(black_stones_img == black, axis=-1)
-        white_stones = np.all(white_stones_img == white, axis=-1)
-
-        stones_img = np.full(src.shape, blue, dtype=np.uint8)
-        stones_img[black_stones] = black
-        stones_img[white_stones] = white
-
-        return stones_img
-
-
-    def _detect(self, src: np.ndarray, cascade):
-        min_size = (self._width // self._size, self._length // self._size)
+    def _detect_stones(self, src: np.ndarray, cascade: cv2.CascadeClassifier):
+        min_size = (self._width // self._size, self._height // self._size)
         rects = cascade.detectMultiScale(
-            src, scaleFactor=1.1, minNeighbors=3, minSize=min_size, flags=cv2.CASCADE_SCALE_IMAGE)
+            src, 
+            scaleFactor=1.1, 
+            minNeighbors=3, 
+            minSize=min_size, 
+            flags=cv2.CASCADE_SCALE_IMAGE)
 
         return rects
 
 
-    def _is_point_inside(self, rects, px, py):
-        for x, y, h, w in rects:
-            if x < px < x + w and y < py < y + h:
-                return True
-        return False
+    def _is_inside_board(self, x, y, src_w, src_h):
+        offset = 10
+        X1 = self._lt_x - offset
+        Y1 = self._lt_y - offset
+        X2 = self._rb_x + offset
+        Y2 = self._rb_y + offset
+
+        X1 = max(0, X1)
+        Y1 = max(0, Y1)
+        X2 = min(src_w, X2)
+        Y2 = min(src_h, Y2)
+
+        return X1 < x < X2 and Y1 < y < Y2
 
 
-    def _decrease_rect(self, rect):
-        return np.array([
-            rect[0] + self.decreasor * self._step_x,
-            rect[1] + self.decreasor * self._step_y,
-            rect[2] - 2 * self.decreasor * self._step_x,
-            rect[3] - 2 * self.decreasor * self._step_y
-        ], dtype=int)
+    def _rect_to_point(self, rect):
+        x, y, h, w = rect
+        return x + w // 2, y + h // 2 
+
+
+    def _get_pos_in_matrix(self, x, y):
+        X = self._lt_x
+        Y = self._lt_y
+        w = self._width
+        h = self._height
+
+        row = int(round((y - Y) / h * (self._size - 1)))
+        col = int(round((x - X) / w * (self._size - 1)))
+        
+        return row, col
 
 
     def get_stones_matrix(self, src: np.ndarray) -> np.ndarray:
@@ -119,65 +86,39 @@ class StonesDetector:
             и возвращает матрицу расположения 
             камней на изображении.
         '''
-        if self.color_detection:            
-            precessed_image = self._process_image(src)
-        else:
-            precessed_image = src.copy()
-        
+        h, w = src.shape[:2]
         gray_img = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
-        black_stones = self._detect(gray_img, self._black_cascade)
-        white_stones = self._detect(gray_img, self._white_cascade)
 
-        if len(black_stones) != 0:
-            black_stones = np.apply_along_axis(self._decrease_rect, axis=1, arr=black_stones)
-        if len(white_stones) != 0:
-            white_stones = np.apply_along_axis(self._decrease_rect, axis=1, arr=white_stones) 
+        black_stones = self._detect_stones(gray_img, self._black_cascade)
+        white_stones = self._detect_stones(gray_img, self._white_cascade)
 
         matrix = np.zeros((self._size, self._size), dtype=int)
-
-        for i in range(self._size):
-            for j in range(self._size):
-                # координаты основной точки, на которой расположен камень 
-                x = self._start[0] + int(i * self._step_x) 
-                y = self._start[1] + int(j * self._step_y)
-
-                if self.color_detection:
-                    # координаты прямоугольной области
-                    y1 = y - self._ry if (y - self._ry) > self._start[0] else y
-                    y2 = y + self._ry if (y + self._ry) < self._end[0] else y
-                    x1 = x - self._rx if (x - self._rx) > self._start[1] else x
-                    x2 = x + self._rx if (x + self._rx) < self._end[1] else x
-                
-                    colors = precessed_image[y1:y2,x1:x2]
-                    # средний цвет прямоугольной области
-                    color = cv2.mean(colors)[:3]
-
-                if self._is_point_inside(black_stones, x, y):
-                    matrix[j][i] = 1
-
-                elif self._is_point_inside(white_stones, x, y):
-                    matrix[j][i] = 2
-                
-                elif self.color_detection and all(component < 100 for component in color):
-                    matrix[j][i] = 1
-
-                elif self.color_detection and all(component > 200 for component in color):
-                    matrix[j][i] = 2
-                    
-                if self.debug:
-                    yellow = (0, 255, 255)
-                    cv2.rectangle(precessed_image, (x,y), (x,y), yellow, 5)
-                    if self.color_detection:
-                        cv2.rectangle(precessed_image, (x1, y1), (x2, y2), yellow, 2)
-
-                    for x, y, b, h in black_stones:
-                        cv2.rectangle(precessed_image, (x, y), (x+b, y+h), yellow, 4)
-
-                    for x, y, b, h in white_stones:
-                        cv2.rectangle(precessed_image, (x, y), (x+b, y+h), yellow, 4)
-      
+        
         if self.debug:
-            self._view_image(precessed_image)
+            debug_image = src.copy()
+
+        for stone in black_stones:
+            cx, cy = self._rect_to_point(stone)
+
+            if self.debug:
+                cv2.rectangle(debug_image, (cx, cy), (cx, cy), (0, 255, 0), 10)
+
+            if self._is_inside_board(cx, cy, w, h):
+                j, i = self._get_pos_in_matrix(cx, cy)
+                matrix[j][i] = 1
+
+        for stone in white_stones:
+            cx, cy = self._rect_to_point(stone)
+
+            if self.debug:
+                cv2.rectangle(debug_image, (cx, cy), (cx, cy), (0, 255, 0), 10)
+
+            if self._is_inside_board(cx, cy, w, h):
+                j, i = self._get_pos_in_matrix(cx, cy)
+                matrix[j][i] = 2
+
+        if self.debug:
+            self._view_image(debug_image)
 
         return matrix  
 
