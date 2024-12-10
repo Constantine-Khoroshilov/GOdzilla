@@ -164,7 +164,7 @@ async def download_sgf(video_id: str, file_name: str = None):
         raise HTTPException(400, 'The video file has not been processed')
 
     sgf_name = os.path.basename(video.processing.sgf_path)
-    filename = f'{file_name}.txt' if file_name is not None else sgf_name
+    filename = f'{file_name}.sgf' if file_name is not None else sgf_name
 
     return FileResponse(video.processing.sgf_path, filename = filename)
 
