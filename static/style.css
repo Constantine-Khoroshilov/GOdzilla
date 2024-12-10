@@ -8,6 +8,7 @@
         background-position: top;
         justify-content: center;
         background-color: lightgrey;
+        position: relative;
     }
     /* Годзиллы */
     #img_GOD {
@@ -268,13 +269,6 @@
         font-weight: bold;
     }
 
-    /* Основное тело (с меню выбора) */
-    body {
-        display: grid;
-        grid-template-columns: 0.8fr 3fr;
-        margin: 0px;
-        min-height: 100vh;
-    }
     
     #container {
         position: relative;
@@ -286,6 +280,12 @@
 
     #image {
         width: 100%;
+    }
+
+    #video0 {
+        max-width: 1000px;
+        display: block;
+        /* margin: 5px; */
     }
 
     #rectangle {
@@ -327,3 +327,12 @@
         position: relative;
         margin: auto;
     }
+
+    /* Основное тело (с меню выбора) */
+    body {
+        display: grid;
+        grid-template-columns: 0.8fr 3fr;
+        margin: 0px;
+        min-height: 100vh;
+    }
+    

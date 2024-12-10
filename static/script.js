@@ -293,6 +293,11 @@ async function openArea(video, start) {
         // Подстановка атрибута в тег
         srcPtr = mainElement.getElementsByTagName('source')[0];
         srcPtr.setAttribute('src', video);
+        video0 = document.getElementById('video0');
+        // Устанавливаем начальное время видео
+        video0.addEventListener('loadeddata', () => {
+            video0.currentTime = start; // Устанавливаем время начала
+        });
     } 
     else {
         // Предупреждение, если видео не загружено
@@ -301,18 +306,17 @@ async function openArea(video, start) {
     
     const rectangle = document.getElementById('rectangle');
     const resizer = document.querySelector('.resizer');
-    const container = document.getElementById('.video-player-container');
+    const container = document.getElementById('container');
     const saveButton = document.getElementById('saveButton');
-    const image = document.getElementById('video-player');
-    //     const image = document.getElementById('image');
-
+    
     let isResizing = false;
     let isDragging = false;
     let startX, startY, startWidth, startHeight;
 
-    // Get the bounding box of the image (the container's size)
+
+    // Get the bounding box of the video (the container's size)
     const getContainerBounds = () => {
-        const rect = image.getBoundingClientRect();
+        const rect = video0.getBoundingClientRect();
         return {
             width: rect.width,
             height: rect.height,
@@ -348,9 +352,9 @@ async function openArea(video, start) {
             let newWidth = startWidth + (e.clientX - startX);
             let newHeight = startHeight + (e.clientY - startY);
 
-            // Ensure the rectangle stays inside the image bounds when resizing
-            const maxWidth = image.width - rectangle.offsetLeft;
-            const maxHeight = image.height - rectangle.offsetTop;
+            // Ensure the rectangle stays inside the video bounds when resizing
+            const maxWidth = containerBounds.width - rectangle.offsetLeft;
+            const maxHeight = containerBounds.height - rectangle.offsetTop;
 
             newWidth = Math.max(50, Math.min(newWidth, maxWidth)); // Min and max width
             newHeight = Math.max(50, Math.min(newHeight, maxHeight)); // Min and max height
@@ -377,7 +381,7 @@ async function openArea(video, start) {
 
     saveButton.addEventListener('click', () => {
         const rect = rectangle.getBoundingClientRect();
-        const containerRect = image.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
         const coords = {
             x1: rect.left - containerRect.left,
             y1: rect.top - containerRect.top,
@@ -386,6 +390,8 @@ async function openArea(video, start) {
         };
         alert(`Координаты прямоугольника:\nX1: ${coords.x1}, Y1: ${coords.y1}, X2: ${coords.x2}, Y2: ${coords.y2}`);
     });
+
+
 }
 
 
@@ -430,7 +436,7 @@ function captureFrameAtTimeAndSave(uploadedVideoURL, start) {
 // Обработка обрезки видео
 function setStartStopForVideo(uploadedVideoUrl, startTime, endTime) {
     // captureFrameAtTimeAndSave(uploadedVideoUrl, startTime);
-    openArea(uploadedVideoUrl, startTime);
+    openArea(uploadedVideoUrl, 10);
     alert(`Обрезаем видео от ${formatTime(startTime)} до ${formatTime(endTime)} !`);
     processing_data.segment.start = startTime;
     processing_data.segment.stop = endTime;
