@@ -75,11 +75,12 @@ class Processing:
         self._video.status = Video.Status.UPLOADED
         self.status = Processing.Status.STOPPED
 
-    def break_processing(self):
+    def break_processing(self, final_function):
         ''' Метод, вызывающий исключение ProcessingCancelled,
             если процесс обработки был остановлен, вызывается 
             только внутри функции обработки видеозаписи
         '''
+        final_function()
         if self.status == Processing.Status.STOPPED:
             raise ProcessingCancelled()
 
