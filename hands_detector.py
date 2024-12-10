@@ -1,15 +1,6 @@
 from ultralytics import YOLO
 import numpy as np
-
+model = YOLO(r"models_parameters/hands_detector/best.pt",verbose=False) # путь до модели
 def detect_hands(image: np.ndarray):
-    model = YOLO(r"..\best.pt") # путь до модели
-    results = model.predict(source=image, save=False)
-
-    arary_of_type = []
-    i = 0
-    for result in results:
-        arary_of_type.append(len(results[i].boxes.conf.cpu().numpy()) != 0)
-        i += 1
-
-    return arary_of_type[0]
-
+    results = model.predict(source=image, save=False, verbose=False)
+    return len(results[0].boxes.conf.cpu().numpy()) != 0
