@@ -80,8 +80,8 @@ class Processing:
             если процесс обработки был остановлен, вызывается 
             только внутри функции обработки видеозаписи
         '''
-        final_function()
         if self.status == Processing.Status.STOPPED:
+            final_function()
             raise ProcessingCancelled()
 
     def _is_video_prepared(self):
