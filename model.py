@@ -1,4 +1,4 @@
-from ProcessVideo import process_video
+from process_video import process_video
 from pydantic import BaseModel
 from typing import List
 from enum import Enum
@@ -98,7 +98,7 @@ class Processing:
         self.sgf_path = os.path.join(sgfs_folder, f'{video_name}.sgf')
         try:
             # функция обработки видеозаписи 
-            process_video(self._video, self, self.sgf_path)
+            process_video(self._video, self)
             # конец функции обработки
 
             self._video.status = Video.Status.PROCESSED
