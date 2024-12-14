@@ -65,7 +65,7 @@ def process_video(video, processing, size=9):
                 coordinates = np.argwhere(difference > 0)
                 if coordinates.size > 0:
                     y, x = coordinates[0, 0], coordinates[0, 1]
-                    move = (whose_move[new_matrix[y, x]], (x + 1, abs(y - size))) # abs(y - 18)))
+                    move = (whose_move[int(new_matrix[y, x])],(int(x + 1), int(abs(y - size)))) # abs(y - 18)))
                     moves_list.append(move)
                     matrix = new_matrix.copy()
 
