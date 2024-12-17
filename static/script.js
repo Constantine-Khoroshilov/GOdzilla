@@ -24,6 +24,7 @@ const originalMainContent = document.querySelector('.main').innerHTML;
 // Функция для восстановления главной страницы (если мы допустим находимся на "Справка")
 function openMain() {
     const mainElement = document.querySelector('.main');
+    mainElement.style.display = 'grid';
     mainElement.innerHTML = originalMainContent;
     restoreMainEvents();
 }
@@ -200,7 +201,13 @@ async function uploadVideoToServer(file) {
 // Открытие страницы справки - ДЖОРДЖ
 async function openMan() {
     const mainElement = document.querySelector('.main');
+
+    // Загружаем контент и устанавливаем его
     mainElement.innerHTML = await getStaticFileFromServer('man.html');
+    
+    // После загрузки меняем display с grid на flex
+    mainElement.style.display = 'flow';
+
 }
 
 async function loadVideo() {
@@ -210,6 +217,7 @@ async function loadVideo() {
     const loadingGif = document.getElementById('loading-gif'); // Анимация загрузки
     const videoInput = document.getElementById('video-input'); // Анимация загрузки cut-video-button
     const obrezkaButton = document.getElementById('cut-button');
+    mainElement.style.display = 'grid';
 
     // Скрыть анимацию загрузки, если она есть
     if (loadingGif) {
@@ -389,6 +397,7 @@ async function openArea(video, start) {
             y2: rect.bottom - containerRect.top
         };
         alert(`Координаты прямоугольника:\nX1: ${coords.x1}, Y1: ${coords.y1}, X2: ${coords.x2}, Y2: ${coords.y2}`);
+        GetAnswer();
     });
 
 
@@ -442,6 +451,39 @@ function setStartStopForVideo(uploadedVideoUrl, startTime, endTime) {
     processing_data.segment.stop = endTime;
 }
 
+// ОТВЕЕЕЕЕЕЕЕТ
+async function GetAnswer() {
+    const mainElement = document.querySelector('.main');
+    mainElement.innerHTML = await getStaticFileFromServer('get_sgf.html');
+    const cutVideoButton = document.getElementById('cut-video-button'); // Кнопка "Обрезать видео"
+    const areabutton = document.getElementById('area-video-button'); // Кнопка "Обрезать видео"
+    const resultbutton = document.getElementById('result-video-button'); // Кнопка "Обрезать видео"
+    const strelki = document.querySelectorAll('#strelka');
+    // добавляем ей атрибут disabled
+    resultbutton.setAttribute('disabled', '');
+    strelki.forEach(strelka => {
+        console.log(strelka); // Каждый найденный элемент
+        strelka.style.visibility = 'visible'; 
+    });
+    cutVideoButton.style.visibility = 'visible';
+    cutVideoButton.style.backgroundColor = 'LightGreen';
+    const cutVideoButton_obrezka = document.getElementById('cut-button-obrezka');
+    
+    // Открытие "Обрезка видео" из выделения области
+    if (cutVideoButton_obrezka) {
+        cutVideoButton_obrezka.onclick = openCutVideoPage;
+    }
+
+    if (areabutton) {
+        areabutton.onclick = openArea;
+    }
+
+    areabutton.style.backgroundColor = 'LightGreen';
+    areabutton.style.visibility = 'visible';
+    resultbutton.style.visibility = 'visible';
+    resultbutton.style.backgroundColor = 'skyblue';
+
+}
 
  // Функция для управления меню
  function toggleMenu() {

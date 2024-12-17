@@ -227,7 +227,7 @@
     }
     /* "На главную" */
     .return-button {
-        height: 80%;
+    height: 80%;
     width: 50%;
     position: relative;
     grid-column: 2;
@@ -283,7 +283,8 @@
     }
 
     #video0 {
-        max-width: 1000px;
+        width: 1200px;
+        max-width: 1800px;
         display: block;
         /* margin: 5px; */
     }
@@ -335,4 +336,24 @@
         margin: 0px;
         min-height: 100vh;
     }
+    
+ /* Основной контейнер для каждой секции */
+ .section {
+    display: flex;
+    align-items: flex-start; /* Выравнивание по верхнему краю */
+    gap: 20px; /* Отступ между изображением и текстом */
+    margin-bottom: 40px;
+}
+
+/* Стили для изображений */
+.section img {
+    height: 300px; /* Высота изображений */
+    flex-shrink: 0; /* Запрещаем уменьшать изображение */
+}
+
+/* Текстовые блоки */
+.section-text {
+    flex: 1; /* Занимает всё оставшееся пространство */
+}
+
     
