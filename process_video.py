@@ -37,7 +37,7 @@ def process_video(video, processing, size=9):
 
     board_area = video.board_area.x1, video.board_area.y1, video.board_area.x2, video.board_area.y2
     detector = StonesDetector(*board_area, size=size)
-    detector.debug = True
+    detector.debug = False
 
     matrix = np.zeros((size, size), dtype=int)
     moves_list = []
