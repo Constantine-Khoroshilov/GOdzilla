@@ -273,13 +273,16 @@ async function postProcessingData() {
     const response = await fetch(`/send_processing_data`, 
         { 
             method: 'POST',
-            body: processing_data 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(processing_data) 
         }
     );
-    if (response == 422)
-        console.log("Validation error")
-    else if (response == 200)
-        console.log("Processing data sent")
+    if (response.ok)
+        console.log("Processing data sent");
+    else 
+        console.log(`Unknown response: ${response}`);
 }
 
 
@@ -400,20 +403,21 @@ async function openArea(video, start) {
         e.preventDefault();
     });
 
-    saveButton.addEventListener('click', () => {
-        const rect = rectangle.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const coords = {
-            x1: rect.left - containerRect.left,
-            y1: rect.top - containerRect.top,
-            x2: rect.right - containerRect.left,
-            y2: rect.bottom - containerRect.top
-        };
-        alert(`Координаты прямоугольника:\nX1: ${coords.x1}, Y1: ${coords.y1}, X2: ${coords.x2}, Y2: ${coords.y2}`);
-        GetAnswer();
-    });
+    saveButton.addEventListener('click', open_sgf_page)
+}
 
-
+async function open_sgf_page(){
+    const rect = rectangle.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const coords = {
+        x1: rect.left - containerRect.left,
+        y1: rect.top - containerRect.top,
+        x2: rect.right - containerRect.left,
+        y2: rect.bottom - containerRect.top
+    };
+    alert(`Координаты прямоугольника:\nX1: ${coords.x1}, Y1: ${coords.y1}, X2: ${coords.x2}, Y2: ${coords.y2}`);
+    await postProcessingData();
+    GetAnswer();   
 }
 
 
