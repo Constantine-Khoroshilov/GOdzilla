@@ -1,6 +1,8 @@
 var uploadedVideoUrl = null; // Глобальная переменная для хранения URL загруженного видео
 var videoElement; // Переменная для элемента <video>
 
+var video_id;
+
 var videoStart;
 var videoStop;
 var videoEnd;
@@ -183,7 +185,7 @@ async function uploadVideoToServer(file) {
     try {
         const idResponse = await fetch('/video_id', { method: 'GET' });
         const id = (await idResponse.json()).video_id;
-
+        video_id = id;
         const response = await fetch(`/upload?video_id=${id}`, {
             method: 'POST',
             body: formData,
@@ -270,13 +272,16 @@ async function getStaticFileFromServer(fileName) {
 
 
 async function postProcessingData() {
-    const response = await fetch(`/send_processing_data`, 
+    const url = new URL(`http:/127.0.0.1:8000/send_processing_data`);
+    url.searchParams.append('video_id', video_id);
+
+    const response = await fetch(url, 
         { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(processing_data) 
+            body: JSON.stringify(processing_data), 
         }
     );
     if (response.ok)
