@@ -269,6 +269,19 @@ async function getStaticFileFromServer(fileName) {
 }
 
 
+async function postProcessingData() {
+    const response = await fetch(`/send_processing_data`, 
+        { 
+            method: 'POST',
+            body: processing_data 
+        }
+    );
+    if (response == 422)
+        console.log("Validation error")
+    else if (response == 200)
+        console.log("Processing data sent")
+}
+
 
 
 async function openArea(video, start) {
