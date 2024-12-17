@@ -271,6 +271,17 @@ async function getStaticFileFromServer(fileName) {
 }
 
 
+async function getProcessingStatus(video_id) {
+    const url = new URL(`http:/127.0.0.1:8000/get_processing_status`);
+    url.searchParams.append('video_id', video_id);
+
+    const response = await fetch (url, { method: 'GET' })
+    const data = await response.json();
+    const status = data.status; 
+    return status;
+}
+
+
 async function postProcessingData() {
     const url = new URL(`http:/127.0.0.1:8000/send_processing_data`);
     url.searchParams.append('video_id', video_id);
@@ -284,13 +295,34 @@ async function postProcessingData() {
             body: JSON.stringify(processing_data), 
         }
     );
+
+    if (!response.ok) {
+        throw new Error(`Unknown response: ${response.statusText}`);
+    }
+    console.log("Processing data sent");
+
+    let status;
+
+    while ((status = await getProcessingStatus(video_id)) !== "processed") {
+        console.log(status);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+    }
+
+    console.log("Processing complete!");
+}
+
+async function getSGF(fileName="test_sgf") {
+    const url = new URL(`http:/127.0.0.1:8000/download_sgf`);
+    url.searchParams.append('video_id', video_id);
+    url.searchParams.append('file_name', fileName);
+
+    const response = await fetch(url, { method: 'GET' } );
+
     if (response.ok)
-        console.log("Processing data sent");
+        console.log(`OK: ${response.text()}`);
     else 
         console.log(`Unknown response: ${response}`);
 }
-
-
 
 async function openArea(video, start) {
     const mainElement = document.querySelector('.main');
