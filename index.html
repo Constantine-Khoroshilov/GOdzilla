@@ -13,6 +13,8 @@
     <link rel="manifest" href="./static/site.webmanifest">
 </head>
 
+ <!-- ГЛАВНАЯ -->
+
 <body>
     <!-- Бургер меню -->
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
@@ -25,22 +27,24 @@
         </div>
         <div class="empty-cell"></div>
         <button class="navi-button" onclick="openMain()"><b>Главная</b></button>
+        <button class="navi-button" id="load-video"><b>Загрузка видео</b></button>
+        <h2 id="strelka"> _________________________ </h2>
         <button class="navi-button" id="cut-video-button"><b>Обрезка видео</b></button>
-        <button class="navi-button"><b>Выделение игровой доски</b></button>
-        <button class="navi-button"><b>Получение SGF файла</b></button>
-        <div class="empty-cell"></div>
+        <h2 id="strelka">&#8595;</h2>
+        <button class="navi-button" id="area-video-button"><b>Выделение области</b></button>
+        <h2 id="strelka">&#8595;</h2>
+        <button class="navi-button" id="result-video-button"><b>Результат</b></button>
+        <h2 id="strelka"> _________________________ </h2>
         <button class="navi-button" id="open-man-butt"><b>Справка</b></button>
     </div>
-    <!-- Main -->
+    <!-- Main <script src="static/script.js"> </script> -->
     <div class="main">
-        <img src="static/Godzilla_cut_transparent.png" alt="Godzilla" class="main-image">
+        <img src="static/Godzilla_cut_transparent.png" alt="Godzilla" id = "img_GOD" class="main-image">
         <h1 class="main-head">Добро пожаловать в сервис Godzilla!</h1>
-        <input type="file" id="video-input" class="video-input" accept="video/*">
-        <button id="upload-button">Загрузить видео</button>
-        <img id="loading-gif" src="static/30.gif" alt="Загрузка...">
-        <button id="open-man-button">Открыть справку</button>
+        <p class="main-head" style="font-size: x-large;"> сервис, предназначенный для автоматического преобразования видеозаписей
+             партий игры Го <br> в стандартный формат SGF</p>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
-    <script src="static/script.js"></script>
+    <script src="static/script.js"> </script>
 </body>
 </html>
