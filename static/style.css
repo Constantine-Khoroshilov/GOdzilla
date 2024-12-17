@@ -3,14 +3,15 @@
     .main {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 3fr repeat(2, 0.5fr);
+        grid-template-rows: 2fr 0.5fr 0.2fr;
         background-repeat: no-repeat;
         background-position: top;
         justify-content: center;
         background-color: lightgrey;
+        position: relative;
     }
     /* Годзиллы */
-    .main img {
+    #img_GOD {
             grid-column: span 2;
             width: 55%; 
             margin: auto;
@@ -19,9 +20,8 @@
     .navi {
         display: grid;
         grid-column: 1; 
-        grid-template-rows: max(10vh, 50px) 3vh repeat(4, 1fr) 3fr 1fr;
-        row-gap: 10px;
-        background-color: black;
+        grid-template-rows: max(10vh, 50px) 2vh max(8vh) max(8vh) max(10vh) max(8vh) max(6vh) max(8vh) max(6vh) max(8vh) max(10vh) max(10vh);
+        background-color: white;
     }
     /* Область надписи "Годзилла" */
     .navi > .navi-head-wrapper {
@@ -67,12 +67,56 @@
             margin: 20px 0;
     }
 
+    .main-head2
+    {
+            grid-column: span 2; 
+            text-align: center;
+            margin: 10px 0;
+    }
+
     /* Кнопка загрузки видео на главном экране*/
     #upload-button {
         height: 80%;
         width: 50%;
         position: relative;
-        grid-column: 1;
+        grid-column: span 2;
+        margin: auto;
+    }
+
+        /* Кнопка загрузки видео на главном экране*/
+        #area {
+            height: 60vh;
+            grid-column: span 2;
+            margin: auto;
+        }
+
+    #strelka {
+        text-align: center;
+        visibility: hidden;
+        color: black;
+    }
+
+    #cut-video-button {
+        background-color: rgb(122, 122, 122);
+        visibility: hidden;
+    }
+    
+    #area-video-button {
+        visibility: hidden;
+    }
+
+    #result-video-button {
+        visibility: hidden;
+    }
+
+
+    /* Кнопка загрузки видео на главном экране*/
+    #cut-button {
+        display: none;
+        height: 80%;
+        width: 50%;
+        position: relative;
+        grid-column: span 2;
         margin: auto;
     }
 
@@ -128,7 +172,7 @@
             margin: 20px 0;
         }
     
-        .main img {
+        #img_GOD {
             width: 70%; 
             object-fit: cover; 
             grid-column: span 2; 
@@ -142,7 +186,6 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 250px;
             height: 100%;
             transform: translateX(-100%);
         }
@@ -154,7 +197,6 @@
     
         #upload-button{
         position: relative;
-        margin: 0px 19px 30px 20px;
         height: 60%;
         width: 70%;
         }
@@ -185,12 +227,13 @@
     }
     /* "На главную" */
     .return-button {
-        height: 80%;
+    height: 80%;
     width: 50%;
     position: relative;
     grid-column: 2;
     margin: auto;
     }
+
     /* Перейти на "Выделение игровой доски" после обрезки */
     .ret-button {
         background-color: black;
@@ -226,11 +269,91 @@
         font-weight: bold;
     }
 
+    
+    #container {
+        position: relative;
+        grid-column: span 2; /* Прямоугольник на всю ширину */
+        display: inline-block;
+        margin: auto;
+        
+    }
+
+    #image {
+        width: 100%;
+    }
+
+    #video0 {
+        width: 1200px;
+        max-width: 1800px;
+        display: block;
+        /* margin: 5px; */
+    }
+
+    #rectangle {
+        position: absolute;
+        border: 2px solid red;
+        cursor: move;
+        width: 200px;
+        height: 150px;
+        top: 50px;
+        left: 50px;
+    }
+    
+    .resizer {
+        width: 10px;
+        height: 10px;
+        background-color: red;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        cursor: se-resize;
+    }
+
+    #saveButton {
+    background-color: black;
+    color: white;
+    height: 80%;
+    width: 50%;
+    grid-column: 2;
+    position: relative;
+    margin: auto;
+    }
+
+    .cut-button-obrezka {
+        background-color: white;
+        color: black;
+        height: 80%;
+        width: 50%;
+        grid-column: 1;
+        position: relative;
+        margin: auto;
+    }
+
     /* Основное тело (с меню выбора) */
     body {
         display: grid;
-        grid-template-columns: 1fr 3fr;
+        grid-template-columns: 0.8fr 3fr;
         margin: 0px;
         min-height: 100vh;
     }
+    
+ /* Основной контейнер для каждой секции */
+ .section {
+    display: flex;
+    align-items: flex-start; /* Выравнивание по верхнему краю */
+    gap: 20px; /* Отступ между изображением и текстом */
+    margin-bottom: 40px;
+}
+
+/* Стили для изображений */
+.section img {
+    height: 300px; /* Высота изображений */
+    flex-shrink: 0; /* Запрещаем уменьшать изображение */
+}
+
+/* Текстовые блоки */
+.section-text {
+    flex: 1; /* Занимает всё оставшееся пространство */
+}
+
     
