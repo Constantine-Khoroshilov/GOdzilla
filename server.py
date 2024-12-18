@@ -2,6 +2,7 @@ from model import Video, Processing, get_video_by_id, exists_video_id
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import aiofiles
 import uvicorn
@@ -10,6 +11,14 @@ import os
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Или укажите точный источник, например, ["http://localhost:8000"]
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 os.makedirs('static', exist_ok=True)
 app.mount('/static', StaticFiles(directory='static'), name='static')
