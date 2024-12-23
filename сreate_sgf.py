@@ -1,7 +1,8 @@
 from sgfmill import sgf
 
 def create_sgf(filename, moves): # пример moves [('b', (4, 4)), ('w', (4, 6)), ('b', (2, 3))]
-    game = sgf.Sgf_game.from_string("(;FF[4]GM[1]SZ[19];)")
+    print(moves)
+    game = sgf.Sgf_game.from_string("(;FF[4]GM[1]SZ[9];)")
 
     for i in range(len(moves)):
         new_node = game.extend_main_sequence()

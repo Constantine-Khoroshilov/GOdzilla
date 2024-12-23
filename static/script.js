@@ -28,6 +28,10 @@ function openMain() {
     const mainElement = document.querySelector('.main');
     mainElement.style.display = 'grid';
     mainElement.innerHTML = originalMainContent;
+    const cutVideoButton = document.getElementById('cut-video-button'); // Кнопка "Обрезать видео"
+    const areabutton = document.getElementById('area-video-button'); // Кнопка "Обрезать видео"
+    const resultbutton = document.getElementById('result-video-button'); // Кнопка "Обрезать видео"
+    const strelki = document.querySelectorAll('#strelka');
     restoreMainEvents();
 }
 
@@ -38,6 +42,19 @@ function restoreMainEvents() {
     const manButton = document.getElementById('open-man-button'); // Кнопка справки
     const manButt = document.getElementById('open-man-butt'); // Альтернативная кнопка справки
     const loadingGif = document.getElementById('loading-gif'); // Анимация загрузки
+
+    const areabutton = document.getElementById('area-video-button'); // Кнопка "Обрезать видео"
+    const resultbutton = document.getElementById('result-video-button'); // Кнопка "Обрезать видео"
+    const strelki = document.querySelectorAll('#strelka');
+            
+    strelki.forEach(strelka => {
+        console.log(strelka); // Каждый найденный элемент
+        strelka.style.visibility = 'hidden'; 
+    });
+
+    cutVideoButton.style.visibility = 'hidden';
+    areabutton.style.visibility = 'hidden';
+    resultbutton.style.visibility = 'hidden';
 
     // Скрыть анимацию загрузки, если она есть
     if (loadingGif) {
@@ -192,8 +209,6 @@ async function uploadVideoToServer(file) {
         });
 
         const data = await response.json();
-
-        alert('Видео успешно загружено!');
         console.log(JSON.stringify(data));
     } catch (error) {
         throw new Error('Не удалось загрузить видео.');
@@ -219,6 +234,7 @@ async function loadVideo() {
     const loadingGif = document.getElementById('loading-gif'); // Анимация загрузки
     const videoInput = document.getElementById('video-input'); // Анимация загрузки cut-video-button
     const obrezkaButton = document.getElementById('cut-button');
+    const cancelButton = document.getElementById('cancel-button'); // Кнопка "Отменить загрузку"
     mainElement.style.display = 'grid';
 
     // Скрыть анимацию загрузки, если она есть
@@ -240,6 +256,8 @@ async function loadVideo() {
                 // Меняем отображение кнопки загрузки и справки -> гифка
                 uploadButton.style.display = 'none';
                 if (loadingGif) loadingGif.style.display = 'block'; // Показываем анимацию загрузки
+                if (cancelButton) cancelButton.style.display = 'inline'; // Показываем кнопку "Отменить"
+
 
                 try {
                     // Загружаем видео на сервер
@@ -250,11 +268,16 @@ async function loadVideo() {
                 } 
                 finally {
                     obrezkaButton.style.display = 'block';
-
+                    if (cancelButton) cancelButton.style.display = 'none'; // Скрываем кнопку "Отменить"
                     if (loadingGif) loadingGif.style.display = 'none'; // Скрываем анимацию загрузки
                 }
             }
         };
+    }
+
+    // Настройка события для кнопки "Отменить загрузку"
+    if (cancelButton) {
+        cancelButton.onclick = loadVideo;
     }
 
     // Открытие "Обрезка видео"
@@ -343,6 +366,11 @@ async function openArea(video, start) {
     // Открытие "Обрезка видео" из выделения области
     if (cutVideoButton_obrezka) {
         cutVideoButton_obrezka.onclick = openCutVideoPage;
+    }
+
+    // Открытие справки на "Главная"
+    if (cutVideoButton) {
+        cutVideoButton.onclick = openCutVideoPage;
     }
 
     areabutton.style.backgroundColor = 'skyblue';
@@ -542,6 +570,31 @@ async function GetAnswer() {
     resultbutton.style.visibility = 'visible';
     resultbutton.style.backgroundColor = 'skyblue';
 
+    document.getElementById('get-sgf-button').addEventListener('click', async () => {
+        const videoId = video_id; // Замените на ваш актуальный идентификатор видео
+        const fileName = video_id + ".sgf"; // Название файла для загрузки
+        console.log = fileName
+
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/download_sgf?video_id=${videoId}&file_name=${fileName}`);
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } else {
+                alert("Ошибка при загрузке файла: " + response.statusText);
+            }
+        } catch (error) {
+            alert("Ошибка: " + error.message);
+        }
+    });
 }
 
  // Функция для управления меню

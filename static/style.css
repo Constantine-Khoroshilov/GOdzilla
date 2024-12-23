@@ -3,7 +3,7 @@
     .main {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 2fr 0.5fr 0.2fr;
+        grid-template-rows: 1fr 0.2fr 0.2fr 0.2fr;
         background-repeat: no-repeat;
         background-position: top;
         justify-content: center;
@@ -80,6 +80,7 @@
         width: 50%;
         position: relative;
         grid-column: span 2;
+        grid-row: 4;
         margin: auto;
     }
 
@@ -116,6 +117,7 @@
         height: 80%;
         width: 50%;
         position: relative;
+        grid-row: 4;
         grid-column: span 2;
         margin: auto;
     }
@@ -142,6 +144,7 @@
         width: 50px;
         height: 50px;
         margin: auto;
+        grid-row: 3;
         grid-column: 1 / span 2;
         justify-self: center;
         align-self: center;
@@ -275,6 +278,7 @@
         grid-column: span 2; /* Прямоугольник на всю ширину */
         display: inline-block;
         margin: auto;
+        height: 60vh;
         
     }
 
@@ -283,8 +287,6 @@
     }
 
     #video0 {
-        width: 1200px;
-        max-width: 1800px;
         display: block;
         /* margin: 5px; */
     }
@@ -314,17 +316,19 @@
     color: white;
     height: 80%;
     width: 50%;
+    grid-row: 4;
     grid-column: 2;
     position: relative;
     margin: auto;
     }
 
-    .cut-button-obrezka {
+    #cut-button-obrezka {
         background-color: white;
         color: black;
         height: 80%;
         width: 50%;
         grid-column: 1;
+        grid-row: 4;
         position: relative;
         margin: auto;
     }
@@ -356,4 +360,22 @@
     flex: 1; /* Занимает всё оставшееся пространство */
 }
 
+#cancel-button {
+    display: none;
+    height: 80%;
+    width: 50%;
+    position: relative;
+    grid-column: span 2;
+    margin: auto;
+}
     
+
+#get-sgf-button
+{
+    height: 80%;
+    width: 50%;
+    position: relative;
+    grid-column: span 2;
+    grid-row: 4;
+    margin: auto;
+}
