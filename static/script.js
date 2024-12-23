@@ -320,6 +320,7 @@ async function postProcessingData() {
     );
 
     if (!response.ok) {
+        console.log(JSON.stringify(processing_data))
         throw new Error(`Unknown response: ${response.statusText}`);
     }
     console.log("Processing data sent");
@@ -480,10 +481,10 @@ async function open_sgf_page(){
         x2: rect.right - containerRect.left,
         y2: rect.bottom - containerRect.top
     };
-    processing_data["board_area"]["x1"] = coords.x1;
-    processing_data["board_area"]["x2"] = coords.x2;
-    processing_data["board_area"]["y1"] = coords.y1;
-    processing_data["board_area"]["y2"] = coords.y2;
+    processing_data["board_area"]["x1"] = Math.round(coords.x1);
+    processing_data["board_area"]["x2"] = Math.round(coords.x2);
+    processing_data["board_area"]["y1"] = Math.round(coords.y1);
+    processing_data["board_area"]["y2"] = Math.round(coords.y2);
 
     alert(`Координаты прямоугольника:\nX1: ${coords.x1}, Y1: ${coords.y1}, X2: ${coords.x2}, Y2: ${coords.y2}`);
     await postProcessingData();

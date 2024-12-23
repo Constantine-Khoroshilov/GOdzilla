@@ -37,7 +37,7 @@ def process_video(video, processing, size=9):
 
     board_area = video.board_area.x1, video.board_area.y1, video.board_area.x2, video.board_area.y2
     detector = StonesDetector(*board_area, size=size)
-    detector.debug = True
+    detector.debug = False
 
     matrix = np.zeros((size, size), dtype=int)
     moves_list = []
@@ -65,7 +65,7 @@ def process_video(video, processing, size=9):
                 coordinates = np.argwhere(difference > 0)
                 if coordinates.size > 0:
                     y, x = coordinates[0, 0], coordinates[0, 1]
-                    move = (whose_move[int(new_matrix[y, x])],(int(x + 1), int(abs(y - size)))) # abs(y - 18)))
+                    move = (whose_move[int(new_matrix[y, x])],(int(abs(y - size)) - 1, int(x + 1) - 1)) # abs(y - 18)))
                     moves_list.append(move)
                     matrix = new_matrix.copy()
 
