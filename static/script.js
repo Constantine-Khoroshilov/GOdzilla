@@ -573,21 +573,32 @@ async function GetAnswer() {
     document.getElementById('get-sgf-button').addEventListener('click', async () => {
         const videoId = video_id; // Замените на ваш актуальный идентификатор видео
         const fileName = video_id + ".sgf"; // Название файла для загрузки
-        console.log = fileName
-
+    
         try {
             const response = await fetch(`http://127.0.0.1:8000/download_sgf?video_id=${videoId}&file_name=${fileName}`);
             if (response.ok) {
                 const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                window.URL.revokeObjectURL(url);
+    
+                // Используем File System Access API
+                const options = {
+                    suggestedName: fileName,
+                    types: [
+                        {
+                            description: 'SGF Files',
+                            accept: { 'application/vnd.gosu': ['.sgf'] },
+                        },
+                    ],
+                };
+    
+                // Открываем диалог выбора файла
+                const fileHandle = await window.showSaveFilePicker(options);
+    
+                // Записываем данные в файл
+                const writableStream = await fileHandle.createWritable();
+                await writableStream.write(blob);
+                await writableStream.close();
+    
+                alert("Файл успешно сохранён!");
             } else {
                 alert("Ошибка при загрузке файла: " + response.statusText);
             }
