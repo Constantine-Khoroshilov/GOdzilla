@@ -320,7 +320,6 @@ async function postProcessingData() {
     );
 
     if (!response.ok) {
-        console.log(JSON.stringify(processing_data))
         throw new Error(`Unknown response: ${response.statusText}`);
     }
     console.log("Processing data sent");
