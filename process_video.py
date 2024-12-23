@@ -72,4 +72,4 @@ def process_video(video, processing, size=9):
         current_frame +=1
 
     cap.release()
-    create_sgf(processing.sgf_path, moves_list)
+    create_sgf(processing.sgf_path, moves_list,size)
