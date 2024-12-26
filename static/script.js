@@ -48,7 +48,7 @@ function restoreMainEvents() {
     const strelki = document.querySelectorAll('#strelka');
             
     strelki.forEach(strelka => {
-        console.log(strelka); // Каждый найденный элемент
+        // console.log(strelka); // Каждый найденный элемент
         strelka.style.visibility = 'hidden'; 
     });
 
@@ -92,7 +92,7 @@ async function openCutVideoPage() {
     resultbutton.setAttribute('disabled', '');
             
     strelki.forEach(strelka => {
-        console.log(strelka); // Каждый найденный элемент
+        // console.log(strelka); // Каждый найденный элемент
         strelka.style.visibility = 'visible'; 
     });
     cutVideoButton.style.visibility = 'visible';
@@ -300,8 +300,16 @@ async function getProcessingStatus(video_id) {
 
     const response = await fetch (url, { method: 'GET' })
     const data = await response.json();
-    const status = data.status; 
-    return status;
+    return data.status;
+}
+
+
+async function getProcessedFrames() {
+    const url = new URL(`http:/127.0.0.1:8000/get_processed_frames`)
+    url.searchParams.append('video_id', video_id);
+    const response = await fetch (url, { method: 'GET' })
+    const data = await response.json();
+    return data.processed_frames
 }
 
 
@@ -327,7 +335,7 @@ async function postProcessingData() {
     let status;
 
     while ((status = await getProcessingStatus(video_id)) !== "processed") {
-        console.log(status);
+        console.log(`${status}: ${await getProcessedFrames()}`);
         await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
     }
 

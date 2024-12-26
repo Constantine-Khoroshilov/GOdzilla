@@ -63,7 +63,7 @@ def upload_request_validator(upload_func):
         if file.size > max_size:
             raise HTTPException(400, f'The file size is more than {32212254720 // 1024**3} GB')
         
-        extensions = {'.mp4', '.mkv', '.mov'}
+        extensions = {'.mp4', '.mkv', '.mov', }
         _, extension = os.path.splitext(file.filename)
         if extension.lower() not in extensions:
             raise HTTPException(400, 'The extension of the file is not supported')
@@ -178,6 +178,13 @@ async def download_sgf(video_id: str, file_name: str = None):
     return FileResponse(video.processing.sgf_path, filename = filename)
 
 
+@app.get('/get_processed_frames')
+async def get_processed_frames(video_id: str):
+    video = fetch_video(video_id)
+    response = {
+        'processed_frames': video.processed_frames 
+    }
+    return response
 
 if __name__ == '__main__':
     uvicorn.run(app)

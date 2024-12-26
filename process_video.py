@@ -70,6 +70,7 @@ def process_video(video, processing, size=9):
                     matrix = new_matrix.copy()
 
         current_frame +=1
+        video.processed_frames = current_frame
 
     cap.release()
     create_sgf(processing.sgf_path, moves_list,size)

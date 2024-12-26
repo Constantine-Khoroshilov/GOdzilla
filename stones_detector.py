@@ -119,8 +119,8 @@ class StonesDetector:
 
         if self.debug:
             self._view_image(debug_image)
-        for row in matrix:
-            print(row)
+        # for row in matrix:
+        #     print(row)
 
         return matrix  
 

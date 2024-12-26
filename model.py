@@ -146,6 +146,8 @@ class Video:
         self.segment = None
         self.board_area = None
         self.processing = Processing(self)
+        self.processed_frames = 0
+        
 
     async def remove(self):
         ''' Удаляет видеофайл (не объект) '''
