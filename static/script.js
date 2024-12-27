@@ -355,7 +355,7 @@ async function openArea(video, start) {
     // добавляем ей атрибут disabled
     resultbutton.setAttribute('disabled', '');
     strelki.forEach(strelka => {
-        console.log(strelka); // Каждый найденный элемент
+        // console.log(strelka); // Каждый найденный элемент
         strelka.style.visibility = 'visible'; 
     });
     cutVideoButton.style.visibility = 'visible';
@@ -469,6 +469,11 @@ async function openArea(video, start) {
     saveButton.addEventListener('click', open_sgf_page)
 }
 
+function update_progress_bar(video_processed_percents){
+    const progressBar = document.getElementById('progress-bar')
+    progressBar.style.width = `${video_processed_percents}%`
+}
+
 async function open_sgf_page(){
     const rect = rectangle.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
@@ -486,14 +491,19 @@ async function open_sgf_page(){
     alert(`Координаты прямоугольника:\nX1: ${coords.x1}, Y1: ${coords.y1}, X2: ${coords.x2}, Y2: ${coords.y2}`);
     await postProcessingData();
     console.log("Processing data sent");
-    
+
+    progressBar = document.getElementById("progress-bar-wrapper");
+    progressBar.style.display = "block";    
+
+
     let status;
     while ((status = await getProcessingStatus(video_id)) !== "processed") {
-        console.log(`${status}: ${await getProcessedFrames()}`);
-        await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+        pr_fr = await getProcessedFrames();
+        update_progress_bar(pr_fr);
+        await new Promise(resolve => setTimeout(resolve, 250)); // wait for 1 second
     }
 
-    console.log("Processing complete!");
+    update_progress_bar(100);
     GetAnswer();   
 }
 
