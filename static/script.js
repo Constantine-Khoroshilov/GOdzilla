@@ -488,8 +488,12 @@ async function open_sgf_page(){
     processing_data["board_area"]["y1"] = Math.round(coords.y1);
     processing_data["board_area"]["y2"] = Math.round(coords.y2);
 
-    alert(`Координаты прямоугольника:\nX1: ${coords.x1}, Y1: ${coords.y1}, X2: ${coords.x2}, Y2: ${coords.y2}`);
     await postProcessingData();
+
+    rectangle.style.display = 'none';
+    saveButton.style.display = 'none';
+    document.getElementById('cut-button-obrezka').style.display = 'none';
+
     console.log("Processing data sent");
 
     progressBar = document.getElementById("progress-bar-wrapper");
@@ -550,7 +554,6 @@ function captureFrameAtTimeAndSave(uploadedVideoURL, start) {
 function setStartStopForVideo(uploadedVideoUrl, startTime, endTime) {
     // captureFrameAtTimeAndSave(uploadedVideoUrl, startTime);
     openArea(uploadedVideoUrl, 10);
-    alert(`Обрезаем видео от ${formatTime(startTime)} до ${formatTime(endTime)} !`);
     processing_data.segment.start = startTime;
     processing_data.segment.stop = endTime;
 }
