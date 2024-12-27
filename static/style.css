@@ -379,3 +379,8 @@
     grid-row: 4;
     margin: auto;
 }
+
+#progress-bar-wrapper
+{
+    display: none;
+}

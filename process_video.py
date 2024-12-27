@@ -46,18 +46,19 @@ def process_video(video, processing, size=9):
     # Вычисляем общее количество кадров для обрезки
     start_frame = start_time * fps
     end_frame = end_time * fps
+    total_frames = abs(end_frame - start_frame)
 
     time_interval = 0.5 # 500 мс
     frames_to_skip = int(fps * time_interval)
 
     current_frame = 0
-    while True:
+    while current_frame < end_frame:
         processing.break_processing(cap.release)
         ret, frame = cap.read()
         if not ret:
             break
 
-        if current_frame % frames_to_skip == 0 and start_frame <= current_frame < end_frame:
+        if current_frame % frames_to_skip == 0 and start_frame <= current_frame:
             if not detect_hands(cut_frame(frame, board_area)):
                 new_matrix = detector.get_stones_matrix(frame)
                 difference = new_matrix - matrix
@@ -70,7 +71,8 @@ def process_video(video, processing, size=9):
                     matrix = new_matrix.copy()
 
         current_frame +=1
-        video.processed_frames = current_frame
+        if (start_frame <= current_frame < end_frame):
+            video.processed_frames_relative = int(((current_frame - start_frame) / total_frames) * 100)
 
     cap.release()
     create_sgf(processing.sgf_path, moves_list,size)

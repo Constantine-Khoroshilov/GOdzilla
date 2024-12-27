@@ -182,7 +182,7 @@ async def download_sgf(video_id: str, file_name: str = None):
 async def get_processed_frames(video_id: str):
     video = fetch_video(video_id)
     response = {
-        'processed_frames': video.processed_frames 
+        'processed_frames': video.processed_frames_relative 
     }
     return response
 

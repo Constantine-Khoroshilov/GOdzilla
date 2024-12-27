@@ -330,16 +330,6 @@ async function postProcessingData() {
     if (!response.ok) {
         throw new Error(`Unknown response: ${response.statusText}`);
     }
-    console.log("Processing data sent");
-
-    let status;
-
-    while ((status = await getProcessingStatus(video_id)) !== "processed") {
-        console.log(`${status}: ${await getProcessedFrames()}`);
-        await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
-    }
-
-    console.log("Processing complete!");
 }
 
 async function getSGF(fileName="test_sgf") {
@@ -495,6 +485,15 @@ async function open_sgf_page(){
 
     alert(`Координаты прямоугольника:\nX1: ${coords.x1}, Y1: ${coords.y1}, X2: ${coords.x2}, Y2: ${coords.y2}`);
     await postProcessingData();
+    console.log("Processing data sent");
+    
+    let status;
+    while ((status = await getProcessingStatus(video_id)) !== "processed") {
+        console.log(`${status}: ${await getProcessedFrames()}`);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+    }
+
+    console.log("Processing complete!");
     GetAnswer();   
 }
 
