@@ -51,14 +51,15 @@ def process_video(video, processing, size=9):
     time_interval = 0.5 # 500 мс
     frames_to_skip = int(fps * time_interval)
 
-    current_frame = 0
+    cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+    current_frame = start_frame
     while current_frame < end_frame:
         processing.break_processing(cap.release)
         ret, frame = cap.read()
         if not ret:
             break
 
-        if current_frame % frames_to_skip == 0 and start_frame <= current_frame:
+        if current_frame % frames_to_skip == 0:
             if not detect_hands(cut_frame(frame, board_area)):
                 new_matrix = detector.get_stones_matrix(frame)
                 difference = new_matrix - matrix
@@ -71,7 +72,7 @@ def process_video(video, processing, size=9):
                     matrix = new_matrix.copy()
 
         current_frame +=1
-        if (start_frame <= current_frame < end_frame):
+        if total_frames != 0:
             video.processed_frames_relative = int(((current_frame - start_frame) / total_frames) * 100)
 
     cap.release()
